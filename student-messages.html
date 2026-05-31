@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Messages — EduLink SL</title>
+<link rel="stylesheet" href="edulink.css">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-wrap">
+  <nav class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-txt">EDULINK.SL</div><div class="sb-logo-role">Student Portal</div></div>
+    <div class="sb-section">Main</div>
+    <a href="student-dashboard.html" class="sb-link"><i class="ti ti-layout-dashboard"></i>Dashboard</a>
+    <a href="find-tutors.html" class="sb-link"><i class="ti ti-search"></i>Find Tutors</a>
+    <a href="student-bookings.html" class="sb-link"><i class="ti ti-calendar-check"></i>My Bookings</a>
+    <a href="student-messages.html" class="sb-link active"><i class="ti ti-message-circle"></i>Messages</a>
+    <a href="student-ai-chat.html" class="sb-link"><i class="ti ti-sparkles"></i>AI Career Chat</a>
+    <div class="sb-spacer"></div>
+    <a href="index.html" class="sb-link"><i class="ti ti-logout"></i>Log out</a>
+    <div class="sb-user"><div class="sb-avatar">KJ</div><div class="sb-user-info"><div class="sb-user-name">Kasun Jayasuriya</div><div class="sb-user-sub">Merit: 95/100</div></div></div>
+  </nav>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="app-topbar-title">Messages</div>
+      <div class="app-topbar-right"><div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div></div>
+    </div>
+
+    <div style="padding:20px">
+      <div class="msg-layout">
+        <!-- Conversation list -->
+        <div class="msg-list">
+          <div class="msg-list-hdr" style="display:flex;align-items:center;justify-content:space-between">
+            <span>Conversations</span>
+            <span style="font-size:11px;font-family:var(--ff-mono);background:var(--saffron);color:#fff;padding:2px 7px;border-radius:100px;font-weight:700">2 new</span>
+          </div>
+          <div class="conv-item active">
+            <div style="width:36px;height:36px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#3B4FD8;flex-shrink:0">AP</div>
+            <div class="conv-body">
+              <div class="conv-name">Aruna Perera <span class="conv-time">2m</span></div>
+              <div class="conv-preview">See you at 9 AM tomorrow. Please review chapter 12 on waves...</div>
+            </div>
+            <div class="conv-unread">1</div>
+          </div>
+          <div class="conv-item">
+            <div style="width:36px;height:36px;border-radius:50%;background:#FFF0E0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#A06000;flex-shrink:0">DJ</div>
+            <div class="conv-body">
+              <div class="conv-name">Dilini Jayasuriya <span class="conv-time">1h</span></div>
+              <div class="conv-preview">Do you have any specific topics for Wednesday's session?</div>
+            </div>
+            <div class="conv-unread">1</div>
+          </div>
+          <div class="conv-item">
+            <div style="width:36px;height:36px;border-radius:50%;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#166534;flex-shrink:0">RS</div>
+            <div class="conv-body">
+              <div class="conv-name">Dr. Rohan Silva <span class="conv-time">2d</span></div>
+              <div class="conv-preview">Great work on the last past paper. Keep it up!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active chat -->
+        <div class="chat-area">
+          <div class="chat-hdr">
+            <div style="width:36px;height:36px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#3B4FD8;flex-shrink:0">AP</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Aruna Perera</div>
+              <div style="font-size:11px;color:var(--muted-fg);display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block"></span>Online · Physics tutor</div>
+            </div>
+            <a href="tutor-profile.html" class="btn btn-ghost btn-sm">View profile</a>
+          </div>
+
+          <div class="chat-body">
+            <div class="chat-msg them">
+              <div class="chat-bubble">Hi Kasun! Your session tomorrow is confirmed for 9 AM. We'll be covering electromagnetic induction — quite a big topic for the exam.</div>
+              <div class="chat-timestamp">Yesterday, 6:14 PM</div>
+            </div>
+            <div class="chat-msg me">
+              <div class="chat-bubble">Thank you! I've been going through the textbook. I'm a bit confused about Faraday's law and how to apply it in problems.</div>
+              <div class="chat-timestamp">Yesterday, 6:22 PM</div>
+            </div>
+            <div class="chat-msg them">
+              <div class="chat-bubble">That's very common. We'll work through it step by step tomorrow with plenty of examples. The key is understanding flux change — once that clicks, the rest follows naturally.</div>
+              <div class="chat-timestamp">Yesterday, 6:30 PM</div>
+            </div>
+            <div class="chat-msg me">
+              <div class="chat-bubble">Perfect, I'll make a note of the specific problems I'm stuck on and bring them to the session.</div>
+              <div class="chat-timestamp">Yesterday, 6:35 PM</div>
+            </div>
+            <div class="chat-msg them">
+              <div class="chat-bubble">See you at 9 AM tomorrow. Please review chapter 12 on waves briefly — we might touch on it as well if time allows.</div>
+              <div class="chat-timestamp">2 minutes ago</div>
+            </div>
+          </div>
+
+          <div class="chat-footer">
+            <button class="btn btn-ghost btn-icon btn-sm"><i class="ti ti-paperclip"></i></button>
+            <input class="chat-input" placeholder="Type a message..." id="chat-inp">
+            <button class="btn btn-primary btn-icon btn-sm" onclick="sendMsg()"><i class="ti ti-send"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function sendMsg() {
+  const inp = document.getElementById('chat-inp');
+  if (!inp.value.trim()) return;
+  const body = document.querySelector('.chat-body');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg me';
+  msg.innerHTML = `<div class="chat-bubble">${inp.value}</div><div class="chat-timestamp">Just now</div>`;
+  body.appendChild(msg);
+  body.scrollTop = body.scrollHeight;
+  inp.value = '';
+}
+document.getElementById('chat-inp').addEventListener('keydown', e => { if (e.key === 'Enter') sendMsg(); });
+</script>
+</body>
+</html>

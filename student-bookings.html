@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Bookings — EduLink SL</title>
+<link rel="stylesheet" href="edulink.css">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<style>
+.booking-card { background:#fff; border-radius:var(--r); border:1px solid var(--border-dk); padding:18px 20px; margin-bottom:10px; display:flex; align-items:center; gap:14px; transition:box-shadow .15s; }
+.booking-card:hover { box-shadow:var(--sh-sm); }
+.bc-avatar { width:48px; height:48px; border-radius:var(--r-sm); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; flex-shrink:0; }
+.bc-body { flex:1; min-width:0; }
+.bc-name { font-size:14px; font-weight:700; margin-bottom:2px; display:flex; align-items:center; gap:8px; }
+.bc-meta { font-size:12px; color:var(--muted-fg); display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.bc-meta i { font-size:12px; }
+.bc-actions { display:flex; gap:6px; flex-shrink:0; }
+.bc-time { text-align:right; flex-shrink:0; min-width:80px; }
+.bc-time-val { font-size:13px; font-weight:700; color:var(--primary); font-family:var(--ff-mono); }
+.bc-time-day { font-size:11px; color:var(--muted-fg); }
+.cancel-confirm { background:var(--red-lt); border:1px solid #FECACA; border-radius:var(--r-sm); padding:12px 14px; margin-bottom:10px; display:none; }
+.cancel-confirm.show { display:block; }
+</style>
+</head>
+<body>
+<div class="app-wrap">
+  <nav class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-txt">EDULINK.SL</div><div class="sb-logo-role">Student Portal</div></div>
+    <div class="sb-section">Main</div>
+    <a href="student-dashboard.html" class="sb-link"><i class="ti ti-layout-dashboard"></i>Dashboard</a>
+    <a href="find-tutors.html" class="sb-link"><i class="ti ti-search"></i>Find Tutors</a>
+    <a href="student-bookings.html" class="sb-link active"><i class="ti ti-calendar-check"></i>My Bookings</a>
+    <a href="student-messages.html" class="sb-link"><i class="ti ti-message-circle"></i>Messages</a>
+    <a href="student-ai-chat.html" class="sb-link"><i class="ti ti-sparkles"></i>AI Career Chat</a>
+    <div class="sb-spacer"></div>
+    <a href="#" class="sb-link"><i class="ti ti-settings"></i>Settings</a>
+    <a href="index.html" class="sb-link"><i class="ti ti-logout"></i>Log out</a>
+    <div class="sb-user"><div class="sb-avatar">KJ</div><div class="sb-user-info"><div class="sb-user-name">Kasun Jayasuriya</div><div class="sb-user-sub">Merit: 95/100</div></div></div>
+  </nav>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="app-topbar-title">My Bookings</div>
+      <div class="app-topbar-right">
+        <div class="notif-btn"><i class="ti ti-bell"></i></div>
+        <a href="find-tutors.html" class="btn btn-saffron btn-sm"><i class="ti ti-plus"></i>Book a tutor</a>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'upcoming')">Upcoming <span class="tab-count">3</span></div>
+        <div class="tab" onclick="switchTab(this,'completed')">Completed <span class="tab-count">21</span></div>
+        <div class="tab" onclick="switchTab(this,'cancelled')">Cancelled <span class="tab-count">2</span></div>
+      </div>
+
+      <!-- Upcoming -->
+      <div id="tab-upcoming">
+        <div id="cancel-box" class="cancel-confirm">
+          <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px"><i class="ti ti-alert-triangle"></i> Cancel this session?</div>
+          <div style="font-size:13px;color:var(--red);margin-bottom:10px">Cancelling within 24h deducts <strong>10 merit points</strong> from your score. Cancelling earlier deducts 3 points.</div>
+          <div style="display:flex;gap:8px"><button class="btn btn-danger btn-sm" onclick="document.getElementById('cancel-box').classList.remove('show')">Yes, cancel session</button><button class="btn btn-ghost btn-sm" onclick="document.getElementById('cancel-box').classList.remove('show')">Keep booking</button></div>
+        </div>
+
+        <div class="booking-card" style="border-left:3px solid var(--saffron)">
+          <div class="bc-avatar" style="background:#EEF2FF;color:#3B4FD8">AP</div>
+          <div class="bc-body">
+            <div class="bc-name">Aruna Perera <span class="badge badge-primary">Physics</span> <span class="badge badge-teal">Online</span></div>
+            <div class="bc-meta"><span><i class="ti ti-calendar"></i> Tuesday, 24 Jun 2025</span><span><i class="ti ti-clock"></i> 9:00 – 10:00 AM</span><span><i class="ti ti-repeat"></i> Single session</span></div>
+          </div>
+          <div class="bc-time"><div class="bc-time-val">Today</div><div class="bc-time-val" style="font-size:11px;color:var(--saffron)">in 3h 20m</div></div>
+          <div class="bc-actions">
+            <a href="#" class="btn btn-teal btn-sm"><i class="ti ti-video"></i> Join</a>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('cancel-box').classList.add('show')"><i class="ti ti-x"></i></button>
+          </div>
+        </div>
+
+        <div class="booking-card" style="border-left:3px solid var(--teal)">
+          <div class="bc-avatar" style="background:#FFF0E0;color:#A06000">DJ</div>
+          <div class="bc-body">
+            <div class="bc-name">Dilini Jayasuriya <span class="badge badge-primary">Combined Maths</span> <span class="badge badge-teal">Online</span></div>
+            <div class="bc-meta"><span><i class="ti ti-calendar"></i> Wednesday, 25 Jun 2025</span><span><i class="ti ti-clock"></i> 2:00 – 3:00 PM</span><span><i class="ti ti-repeat"></i> Monthly pack · Session 2/4</span></div>
+          </div>
+          <div class="bc-time"><div class="bc-time-val">Tomorrow</div><div class="bc-time-day">14:00</div></div>
+          <div class="bc-actions">
+            <a href="student-messages.html" class="btn btn-ghost btn-sm"><i class="ti ti-message"></i></a>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('cancel-box').classList.add('show')"><i class="ti ti-x"></i></button>
+          </div>
+        </div>
+
+        <div class="booking-card" style="border-left:3px solid var(--green)">
+          <div class="bc-avatar" style="background:#F0FDF4;color:#166534">RS</div>
+          <div class="bc-body">
+            <div class="bc-name">Dr. Rohan Silva <span class="badge badge-primary">Chemistry</span> <span class="badge badge-saffron">In-person</span></div>
+            <div class="bc-meta"><span><i class="ti ti-calendar"></i> Friday, 27 Jun 2025</span><span><i class="ti ti-clock"></i> 5:00 – 6:00 PM</span><span><i class="ti ti-map-pin"></i> Gampaha, teacher's location</span></div>
+          </div>
+          <div class="bc-time"><div class="bc-time-val">Fri</div><div class="bc-time-day">17:00</div></div>
+          <div class="bc-actions">
+            <a href="student-messages.html" class="btn btn-ghost btn-sm"><i class="ti ti-message"></i></a>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('cancel-box').classList.add('show')"><i class="ti ti-x"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed -->
+      <div id="tab-completed" style="display:none">
+        <div style="margin-bottom:10px">
+          <div class="alert alert-info" style="margin-bottom:12px"><i class="ti ti-info-circle"></i> You can only leave a review within 7 days of a completed session.</div>
+        </div>
+        <div class="booking-card">
+          <div class="bc-avatar" style="background:#EEF2FF;color:#3B4FD8">AP</div>
+          <div class="bc-body">
+            <div class="bc-name">Aruna Perera <span class="badge badge-primary">Physics</span> <span class="badge badge-green">Attended</span></div>
+            <div class="bc-meta"><span><i class="ti ti-calendar"></i> Tuesday, 17 Jun 2025</span><span><i class="ti ti-clock"></i> 9:00 – 10:00 AM</span></div>
+          </div>
+          <div class="bc-time"><div class="bc-time-day">17 Jun</div></div>
+          <div class="bc-actions">
+            <button class="btn btn-saffron btn-sm"><i class="ti ti-star"></i> Leave review</button>
+          </div>
+        </div>
+        <div class="booking-card">
+          <div class="bc-avatar" style="background:#FFF0E0;color:#A06000">DJ</div>
+          <div class="bc-body">
+            <div class="bc-name">Dilini Jayasuriya <span class="badge badge-primary">Combined Maths</span> <span class="badge badge-green">Attended</span></div>
+            <div class="bc-meta"><span><i class="ti ti-calendar"></i> Monday, 10 Jun 2025</span><span><i class="ti ti-clock"></i> 2:00 – 3:00 PM</span></div>
+          </div>
+          <div class="bc-time"><div class="bc-time-day">10 Jun</div></div>
+          <div class="bc-actions"><span class="badge badge-teal"><i class="ti ti-check"></i> Reviewed</span></div>
+        </div>
+      </div>
+
+      <!-- Cancelled -->
+      <div id="tab-cancelled" style="display:none">
+        <div class="booking-card" style="opacity:.7">
+          <div class="bc-avatar" style="background:var(--muted);color:var(--muted-fg)">AP</div>
+          <div class="bc-body">
+            <div class="bc-name">Aruna Perera <span class="badge badge-red">Cancelled by you</span></div>
+            <div class="bc-meta"><span><i class="ti ti-calendar"></i> Monday, 3 Jun 2025</span><span style="color:var(--red)"><i class="ti ti-shield-x"></i> −10 merit points deducted</span></div>
+          </div>
+          <div class="bc-actions"><a href="tutor-profile.html" class="btn btn-ghost btn-sm">Book again</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function switchTab(el, name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['upcoming','completed','cancelled'].forEach(n => {
+    const el = document.getElementById('tab-'+n);
+    if (el) el.style.display = n === name ? 'block' : 'none';
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Messages — EduLink SL</title>
+<link rel="stylesheet" href="edulink.css">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-wrap">
+  <nav class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-txt">EDULINK.SL</div><div class="sb-logo-role">Teacher Portal</div></div>
+    <div class="sb-section">Manage</div>
+    <a href="teacher-dashboard.html" class="sb-link"><i class="ti ti-layout-dashboard"></i>Dashboard</a>
+    <a href="teacher-post-class.html" class="sb-link"><i class="ti ti-plus"></i>Post a Class</a>
+    <a href="teacher-schedule.html" class="sb-link"><i class="ti ti-calendar"></i>Schedule</a>
+    <a href="teacher-messages.html" class="sb-link active"><i class="ti ti-message-circle"></i>Messages</a>
+    <a href="teacher-earnings.html" class="sb-link"><i class="ti ti-wallet"></i>Earnings</a>
+    <div class="sb-spacer"></div>
+    <a href="index.html" class="sb-link"><i class="ti ti-logout"></i>Log out</a>
+    <div class="sb-user"><div class="sb-avatar" style="background:var(--saffron-lt);color:var(--saffron-hv)">AP</div><div class="sb-user-info"><div class="sb-user-name">Aruna Perera</div><div class="sb-user-sub">Merit: 98/100</div></div></div>
+  </nav>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="app-topbar-title">Messages</div>
+      <div class="app-topbar-right"><div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div></div>
+    </div>
+
+    <div style="padding:20px">
+      <div class="msg-layout">
+        <div class="msg-list">
+          <div class="msg-list-hdr" style="display:flex;align-items:center;justify-content:space-between">
+            <span>Messages</span>
+            <span style="font-size:11px;font-family:var(--ff-mono);background:var(--saffron);color:#fff;padding:2px 7px;border-radius:100px;font-weight:700">3 new</span>
+          </div>
+
+          <div class="conv-item active">
+            <div style="width:36px;height:36px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#3B4FD8;flex-shrink:0">KJ</div>
+            <div class="conv-body">
+              <div class="conv-name">Kasun Jayasuriya<span class="conv-time">5m</span></div>
+              <div class="conv-preview">I'm confused about Faraday's law in problems...</div>
+            </div>
+            <div class="conv-unread">2</div>
+          </div>
+
+          <div class="conv-item">
+            <div style="width:36px;height:36px;border-radius:50%;background:#FDF4FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#7C3AED;flex-shrink:0">NW</div>
+            <div class="conv-body">
+              <div class="conv-name">Nadia Wickramasinghe<span class="conv-time">1h</span></div>
+              <div class="conv-preview">Can we reschedule Friday's session to Saturday?</div>
+            </div>
+            <div class="conv-unread">1</div>
+          </div>
+
+          <div class="conv-item">
+            <div style="width:36px;height:36px;border-radius:50%;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#166534;flex-shrink:0">TB</div>
+            <div class="conv-body">
+              <div class="conv-name">Tharaka Bandara<span class="conv-time">3h</span></div>
+              <div class="conv-preview">Thank you for the notes, really helpful!</div>
+            </div>
+          </div>
+
+          <div class="conv-item">
+            <div style="width:36px;height:36px;border-radius:50%;background:#FFF0E0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#A06000;flex-shrink:0">SP</div>
+            <div class="conv-body">
+              <div class="conv-name">Sanduni Peiris<span class="conv-time">Yesterday</span></div>
+              <div class="conv-preview">What topics will we cover next session?</div>
+            </div>
+          </div>
+
+          <div class="conv-item">
+            <div style="width:36px;height:36px;border-radius:50%;background:#F0F9FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#0891B2;flex-shrink:0">RA</div>
+            <div class="conv-body">
+              <div class="conv-name">Ruwini Alahakoon<span class="conv-time">2d</span></div>
+              <div class="conv-preview">I scored 78% on the past paper — thanks!</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-area">
+          <div class="chat-hdr">
+            <div style="width:36px;height:36px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#3B4FD8;flex-shrink:0">KJ</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Kasun Jayasuriya</div>
+              <div style="font-size:11px;color:var(--muted-fg);display:flex;align-items:center;gap:5px">
+                <span style="width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block"></span>
+                Online · A/L Physics student · Session on Tue 24 Jun
+              </div>
+            </div>
+            <a href="teacher-schedule.html" class="btn btn-ghost btn-sm"><i class="ti ti-calendar"></i> View booking</a>
+          </div>
+
+          <div class="chat-body">
+            <div class="chat-msg them">
+              <div class="chat-bubble">Hi Mr. Aruna! I've been going through the electromagnetic induction chapter. I'm struggling a bit with how to determine the direction of induced current in different configurations.</div>
+              <div class="chat-timestamp">Yesterday, 8:05 PM</div>
+            </div>
+            <div class="chat-msg me">
+              <div class="chat-bubble">That's a great question Kasun! The key is to always apply Lenz's law first — the induced current always opposes the change in flux. I'll prepare a diagram showing the standard configurations for tomorrow's session.</div>
+              <div class="chat-timestamp">Yesterday, 8:18 PM</div>
+            </div>
+            <div class="chat-msg them">
+              <div class="chat-bubble">Thank you! Also, I'm confused about Faraday's law when the area is changing vs the magnetic field changing. Are the formulas different?</div>
+              <div class="chat-timestamp">5 minutes ago</div>
+            </div>
+            <div class="chat-msg them">
+              <div class="chat-bubble">I found a past paper question from 2019 that I can't solve — should I bring it tomorrow?</div>
+              <div class="chat-timestamp">2 minutes ago</div>
+            </div>
+          </div>
+
+          <div class="chat-footer">
+            <button class="btn btn-ghost btn-icon btn-sm"><i class="ti ti-paperclip"></i></button>
+            <input class="chat-input" placeholder="Reply to Kasun..." id="chat-inp">
+            <button class="btn btn-primary btn-icon btn-sm" onclick="sendMsg()"><i class="ti ti-send"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function sendMsg() {
+  const inp = document.getElementById('chat-inp');
+  if (!inp.value.trim()) return;
+  const body = document.querySelector('.chat-body');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg me';
+  msg.innerHTML = `<div class="chat-bubble">${inp.value}</div><div class="chat-timestamp">Just now</div>`;
+  body.appendChild(msg);
+  body.scrollTop = body.scrollHeight;
+  inp.value = '';
+}
+document.getElementById('chat-inp').addEventListener('keydown', e => { if (e.key === 'Enter') sendMsg(); });
+</script>
+</body>
+</html>

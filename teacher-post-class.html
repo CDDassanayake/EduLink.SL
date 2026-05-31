@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Post a Class — EduLink SL</title>
+<link rel="stylesheet" href="edulink.css">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<style>
+.post-wrap { max-width:680px; }
+.plan-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:0; }
+.plan-card { border:2px solid var(--border-dk); border-radius:var(--r-lg); padding:18px; cursor:pointer; transition:all .2s; background:#fff; }
+.plan-card:hover { border-color:var(--saffron); }
+.plan-card.sel { border-color:var(--saffron); background:var(--saffron-lt); }
+.plan-card.popular { border-color:var(--saffron); }
+.plan-popular-tag { background:var(--saffron); color:#fff; font-size:9px; font-family:var(--ff-mono); font-weight:700; text-transform:uppercase; letter-spacing:.5px; padding:2px 8px; border-radius:100px; margin-bottom:10px; display:inline-block; }
+.plan-name { font-size:14px; font-weight:800; margin-bottom:4px; }
+.plan-price { font-size:20px; font-weight:800; color:var(--saffron); margin-bottom:2px; }
+.plan-period { font-size:11px; color:var(--muted-fg); margin-bottom:10px; }
+.plan-features { font-size:12px; color:var(--muted-fg); display:flex; flex-direction:column; gap:4px; }
+.plan-features li { display:flex; align-items:center; gap:5px; }
+.plan-features li i { font-size:12px; color:var(--green); }
+.preview-card { background:var(--bg); border:1.5px solid var(--border-dk); border-radius:var(--r-lg); padding:18px; }
+.preview-label { font-size:10px; font-family:var(--ff-mono); font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--muted-fg); margin-bottom:12px; }
+</style>
+</head>
+<body>
+<div class="app-wrap">
+  <nav class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-txt">EDULINK.SL</div><div class="sb-logo-role">Teacher Portal</div></div>
+    <div class="sb-section">Manage</div>
+    <a href="teacher-dashboard.html" class="sb-link"><i class="ti ti-layout-dashboard"></i>Dashboard</a>
+    <a href="teacher-post-class.html" class="sb-link active"><i class="ti ti-plus"></i>Post a Class</a>
+    <a href="teacher-schedule.html" class="sb-link"><i class="ti ti-calendar"></i>Schedule</a>
+    <a href="teacher-messages.html" class="sb-link"><i class="ti ti-message-circle"></i>Messages</a>
+    <a href="teacher-earnings.html" class="sb-link"><i class="ti ti-wallet"></i>Earnings</a>
+    <div class="sb-spacer"></div>
+    <a href="index.html" class="sb-link"><i class="ti ti-logout"></i>Log out</a>
+    <div class="sb-user">
+      <div class="sb-avatar" style="background:var(--saffron-lt);color:var(--saffron-hv)">AP</div>
+      <div class="sb-user-info"><div class="sb-user-name">Aruna Perera</div><div class="sb-user-sub">Merit: 98/100</div></div>
+    </div>
+  </nav>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="app-topbar-title">Post a Class</div>
+      <div class="app-topbar-right">
+        <div class="notif-btn"><i class="ti ti-bell"></i></div>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="post-wrap">
+        <div class="steps-bar" style="margin-bottom:24px">
+          <div class="step-dot active" id="sd1">1</div>
+          <div class="step-line" id="sl1"></div>
+          <div class="step-dot" id="sd2">2</div>
+          <div class="step-line" id="sl2"></div>
+          <div class="step-dot" id="sd3">3</div>
+          <span style="font-size:13px;color:var(--muted-fg);margin-left:8px" id="step-lbl">Class details</span>
+        </div>
+
+        <!-- Step 1: Class details -->
+        <div id="step1">
+          <div class="section-card" style="margin-bottom:16px">
+            <div style="font-size:15px;font-weight:700;margin-bottom:16px">Class details</div>
+            <div class="form-group">
+              <label class="form-label">Subject</label>
+              <select class="form-input">
+                <option>Select a subject</option>
+                <option selected>A/L Physics</option>
+                <option>Combined Mathematics</option>
+                <option>O/L Mathematics</option>
+                <option>O/L Science</option>
+                <option>Chemistry</option>
+                <option>Biology</option>
+                <option>English Language</option>
+                <option>Accounting</option>
+                <option>Economics</option>
+                <option>ICT</option>
+              </select>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Level / Stream</label>
+                <select class="form-input">
+                  <option selected>A/L — Physical Science</option>
+                  <option>A/L — Biological Science</option>
+                  <option>A/L — Commerce</option>
+                  <option>A/L — Arts</option>
+                  <option>O/L (Grade 9–11)</option>
+                  <option>University</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Class type</label>
+                <select class="form-input">
+                  <option selected>Individual (1-on-1)</option>
+                  <option>Small group (2–5)</option>
+                  <option>Group class (6–20)</option>
+                  <option>Large group (20+)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Teaching mode</label>
+                <select class="form-input">
+                  <option selected>Online</option>
+                  <option>In-person (student comes to me)</option>
+                  <option>Home visit (I go to student)</option>
+                  <option>Both online &amp; in-person</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Language of instruction</label>
+                <select class="form-input">
+                  <option selected>English</option>
+                  <option>Sinhala</option>
+                  <option>Tamil</option>
+                  <option>English &amp; Sinhala</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Hourly rate (LKR)</label>
+                <input class="form-input" type="number" value="3500" placeholder="e.g. 3500">
+                <div class="form-hint">Platform takes 10% commission per completed session.</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Session duration</label>
+                <select class="form-input">
+                  <option>1 hour</option>
+                  <option selected>1.5 hours</option>
+                  <option>2 hours</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Class description</label>
+              <textarea class="form-input" rows="4" placeholder="Describe what students will learn, your teaching approach, and what makes your class special...">Comprehensive A/L Physics covering all theory topics with extensive past paper practice. I focus on building conceptual clarity before moving to problem-solving. Special emphasis on the National Exam question patterns for the past 10 years.</textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">Offer a free trial class?</label>
+              <div style="display:flex;gap:10px;margin-top:4px">
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="trial" value="yes" style="accent-color:var(--saffron)">Yes — 30 min free trial</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="trial" value="no" checked style="accent-color:var(--saffron)">No trial</label>
+              </div>
+              <div class="form-hint">Offering a free trial significantly increases bookings for new listings.</div>
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div class="section-card" style="margin-bottom:16px">
+            <div style="font-size:15px;font-weight:700;margin-bottom:14px">Preview — how students will see this listing</div>
+            <div class="preview-card">
+              <div class="preview-label">Listing preview</div>
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:48px;height:48px;border-radius:var(--r-sm);background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#3B4FD8">AP</div>
+                <div style="flex:1">
+                  <div style="font-size:14px;font-weight:700;margin-bottom:2px">Aruna Perera <span class="verified-tick"></span></div>
+                  <div style="font-size:12px;color:var(--muted-fg);margin-bottom:8px">A/L Physics · Physical Science stream</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">
+                    <span class="badge badge-primary">A/L Science</span>
+                    <span class="badge badge-teal">Online</span>
+                    <span class="badge badge-primary">Individual</span>
+                    <span class="badge-merit">MERIT 98</span>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <div style="font-size:15px;font-weight:800">LKR 3,500<span style="font-size:11px;font-weight:400;color:var(--muted-fg)">/hr</span></div>
+                    <span class="btn btn-outline btn-sm" style="border-radius:100px">View profile →</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-lg" onclick="goStep(2)">Continue to choose a plan →</button>
+        </div>
+
+        <!-- Step 2: Choose plan -->
+        <div id="step2" style="display:none">
+          <div class="section-card" style="margin-bottom:16px">
+            <div style="font-size:15px;font-weight:700;margin-bottom:6px">Choose a listing plan</div>
+            <div style="font-size:13px;color:var(--muted-fg);margin-bottom:18px">Your listing will be shown to students searching for your subject in your district. Choose how long you want it active.</div>
+            <div class="plan-grid">
+              <div class="plan-card" onclick="selectPlan(this)">
+                <div class="plan-name">Basic</div>
+                <div class="plan-price">LKR 500</div>
+                <div class="plan-period">per month</div>
+                <ul class="plan-features">
+                  <li><i class="ti ti-check"></i>Listed for 30 days</li>
+                  <li><i class="ti ti-check"></i>Up to 10 bookings/month</li>
+                  <li><i class="ti ti-check"></i>Standard search ranking</li>
+                </ul>
+              </div>
+              <div class="plan-card popular sel" onclick="selectPlan(this)">
+                <div class="plan-popular-tag">Most popular</div>
+                <div class="plan-name">Standard</div>
+                <div class="plan-price">LKR 1,200</div>
+                <div class="plan-period">per 3 months</div>
+                <ul class="plan-features">
+                  <li><i class="ti ti-check"></i>Listed for 90 days</li>
+                  <li><i class="ti ti-check"></i>Unlimited bookings</li>
+                  <li><i class="ti ti-check"></i>Boosted search ranking</li>
+                  <li><i class="ti ti-check"></i>Save LKR 300 vs monthly</li>
+                </ul>
+              </div>
+              <div class="plan-card" onclick="selectPlan(this)">
+                <div class="plan-name">Premium</div>
+                <div class="plan-price">LKR 2,000</div>
+                <div class="plan-period">per 6 months</div>
+                <ul class="plan-features">
+                  <li><i class="ti ti-check"></i>Listed for 180 days</li>
+                  <li><i class="ti ti-check"></i>Unlimited bookings</li>
+                  <li><i class="ti ti-check"></i>Priority search placement</li>
+                  <li><i class="ti ti-check"></i>Featured tutor badge</li>
+                  <li><i class="ti ti-check"></i>Best value</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+            <button class="btn btn-primary btn-lg" onclick="goStep(3)">Proceed to payment →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Success (goes to payment page) -->
+        <div id="step3" style="display:none">
+          <div style="text-align:center;padding:20px 0">
+            <div style="width:64px;height:64px;background:var(--saffron-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--saffron)"><i class="ti ti-credit-card"></i></div>
+            <div style="font-size:20px;font-weight:800;margin-bottom:6px">Almost there!</div>
+            <div style="font-size:14px;color:var(--muted-fg);margin-bottom:24px">Complete payment to activate your listing and start receiving student bookings.</div>
+            <a href="teacher-post-payment.html" class="btn btn-saffron btn-lg"><i class="ti ti-lock"></i> Complete payment — LKR 1,200</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function goStep(n) {
+  [1,2,3].forEach(i => document.getElementById('step'+i).style.display = i===n?'block':'none');
+  const labels = ['','Class details','Choose a plan','Payment'];
+  document.getElementById('step-lbl').textContent = labels[n];
+  [1,2,3].forEach(i => {
+    const d = document.getElementById('sd'+i);
+    d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
+  });
+  [1,2].forEach(i => { const l = document.getElementById('sl'+i); if(l) l.className = 'step-line'+(i<n?' done':''); });
+}
+function selectPlan(el) {
+  document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+</script>
+</body>
+</html>

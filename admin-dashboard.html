@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard — EduLink SL</title>
+<link rel="stylesheet" href="edulink.css">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<style>
+.admin-sidebar { background:#0A0F2A; }
+.admin-topbar { background:#0A0F2A; border-bottom:1px solid rgba(255,255,255,.06); }
+.admin-topbar .app-topbar-title { color:#fff; }
+.admin-topbar .notif-btn { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1); color:rgba(255,255,255,.6); }
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+.activity-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.activity-item:last-child { border-bottom:none; }
+.act-icon { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; margin-top:1px; }
+.act-text { flex:1; font-size:13px; color:var(--fg); line-height:1.45; }
+.act-time { font-size:11px; color:var(--muted-fg); margin-top:2px; }
+.chart-container { height:140px; display:flex; align-items:flex-end; gap:6px; padding:0 4px; }
+.bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; }
+.bar-fill { width:100%; border-radius:4px 4px 0 0; min-height:4px; }
+.bar-val { font-size:9px; font-family:var(--ff-mono); font-weight:700; color:var(--muted-fg); }
+.bar-lbl { font-size:9px; color:var(--muted-fg); }
+.top-tutor-row { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border); font-size:13px; }
+.top-tutor-row:last-child { border-bottom:none; }
+.rank { width:20px; font-family:var(--ff-mono); font-size:11px; font-weight:700; color:var(--muted-fg); text-align:center; }
+.breakdown-bar { height:6px; background:var(--muted); border-radius:100px; overflow:hidden; flex:1; }
+.breakdown-fill { height:100%; border-radius:100px; }
+</style>
+</head>
+<body>
+<div class="app-wrap">
+  <nav class="sidebar admin-sidebar">
+    <div class="sb-logo"><div class="sb-logo-txt">EDULINK.SL</div><div class="sb-logo-role" style="color:#E8930E">Admin Console</div></div>
+    <div class="sb-section">Platform</div>
+    <a href="admin-dashboard.html" class="sb-link active"><i class="ti ti-chart-bar"></i>Analytics</a>
+    <a href="admin-verifications.html" class="sb-link"><i class="ti ti-shield-check"></i>Verifications <span style="background:var(--saffron);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:100px;margin-left:auto">4</span></a>
+    <a href="#" class="sb-link"><i class="ti ti-users"></i>Users</a>
+    <a href="#" class="sb-link"><i class="ti ti-alert-triangle"></i>Disputes</a>
+    <a href="#" class="sb-link"><i class="ti ti-flag"></i>Flagged reviews</a>
+    <div class="sb-spacer"></div>
+    <div class="sb-section">System</div>
+    <a href="#" class="sb-link"><i class="ti ti-settings"></i>Settings</a>
+    <a href="index.html" class="sb-link"><i class="ti ti-logout"></i>Log out</a>
+    <div class="sb-user">
+      <div class="sb-avatar" style="background:rgba(220,38,38,.2);color:#FCA5A5">AD</div>
+      <div class="sb-user-info"><div class="sb-user-name">Admin</div><div class="sb-user-sub">Super admin</div></div>
+    </div>
+  </nav>
+
+  <div class="app-main">
+    <div class="app-topbar admin-topbar">
+      <div class="app-topbar-title">Platform Analytics</div>
+      <div class="app-topbar-right">
+        <select class="form-input" style="width:auto;padding:6px 12px;font-size:12px;background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.8)"><option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option><option>This year</option></select>
+        <div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
+        <button class="btn btn-ghost btn-sm" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.7)"><i class="ti ti-download"></i> Export</button>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <!-- KPI cards -->
+      <div class="kpi-grid">
+        <div class="stat-box stat-teal">
+          <div class="stat-label"><i class="ti ti-users"></i> Total users</div>
+          <div class="stat-value">4,284</div>
+          <div class="stat-sub" style="color:var(--green)"><i class="ti ti-trending-up" style="font-size:11px"></i> +234 this month</div>
+        </div>
+        <div class="stat-box stat-saffron">
+          <div class="stat-label"><i class="ti ti-calendar-check"></i> Bookings (Jun)</div>
+          <div class="stat-value">1,847</div>
+          <div class="stat-sub" style="color:var(--green)"><i class="ti ti-trending-up" style="font-size:11px"></i> +18% vs May</div>
+        </div>
+        <div class="stat-box stat-green">
+          <div class="stat-label"><i class="ti ti-coin"></i> GMV (Jun)</div>
+          <div class="stat-value" style="font-size:18px">LKR 4.2M</div>
+          <div class="stat-sub" style="color:var(--green)"><i class="ti ti-trending-up" style="font-size:11px"></i> +22% vs May</div>
+        </div>
+        <div class="stat-box stat-primary">
+          <div class="stat-label"><i class="ti ti-building-bank"></i> Platform revenue</div>
+          <div class="stat-value" style="font-size:18px">LKR 420k</div>
+          <div class="stat-sub">10% commission</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:20px;align-items:start">
+        <!-- Bookings chart -->
+        <div class="section-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="font-size:14px;font-weight:700">Monthly bookings</div>
+            <span class="badge badge-green"><i class="ti ti-trending-up"></i> +68% YTD</span>
+          </div>
+          <div class="chart-container">
+            <div class="bar-col"><div class="bar-val">420</div><div class="bar-fill" style="height:23%;background:#EEF2FF;border-top:2px solid var(--primary)"></div><div class="bar-lbl">Jan</div></div>
+            <div class="bar-col"><div class="bar-val">580</div><div class="bar-fill" style="height:31%;background:#EEF2FF;border-top:2px solid var(--primary)"></div><div class="bar-lbl">Feb</div></div>
+            <div class="bar-col"><div class="bar-val">820</div><div class="bar-fill" style="height:44%;background:#EEF2FF;border-top:2px solid var(--primary)"></div><div class="bar-lbl">Mar</div></div>
+            <div class="bar-col"><div class="bar-val">1,100</div><div class="bar-fill" style="height:60%;background:#EEF2FF;border-top:2px solid var(--primary)"></div><div class="bar-lbl">Apr</div></div>
+            <div class="bar-col"><div class="bar-val">1,560</div><div class="bar-fill" style="height:84%;background:#EEF2FF;border-top:2px solid var(--primary)"></div><div class="bar-lbl">May</div></div>
+            <div class="bar-col"><div class="bar-val" style="color:var(--saffron);font-weight:800">1,847</div><div class="bar-fill" style="height:100%;background:var(--saffron-lt);border-top:2px solid var(--saffron)"></div><div class="bar-lbl" style="color:var(--saffron);font-weight:700">Jun</div></div>
+          </div>
+        </div>
+
+        <!-- Top tutors -->
+        <div class="card" style="overflow:hidden">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--border-dk);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:space-between">
+            Top tutors by revenue
+            <a href="#" style="font-size:12px;color:var(--saffron);font-weight:600">View all</a>
+          </div>
+          <div class="top-tutor-row">
+            <span class="rank">1</span>
+            <div style="width:30px;height:30px;border-radius:50%;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#166534;flex-shrink:0">RS</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700">Dr. Rohan Silva</div><div style="font-size:11px;color:var(--muted-fg)">Chemistry</div></div>
+            <div style="text-align:right"><div style="font-size:12px;font-weight:800">LKR 84k</div><span class="badge-merit" style="font-size:9px">MERIT 99</span></div>
+          </div>
+          <div class="top-tutor-row">
+            <span class="rank">2</span>
+            <div style="width:30px;height:30px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#3B4FD8;flex-shrink:0">AP</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700">Aruna Perera</div><div style="font-size:11px;color:var(--muted-fg)">Physics</div></div>
+            <div style="text-align:right"><div style="font-size:12px;font-weight:800">LKR 72k</div><span class="badge-merit" style="font-size:9px">MERIT 98</span></div>
+          </div>
+          <div class="top-tutor-row">
+            <span class="rank">3</span>
+            <div style="width:30px;height:30px;border-radius:50%;background:#FFF0E0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#A06000;flex-shrink:0">DJ</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700">Dilini Jayasuriya</div><div style="font-size:11px;color:var(--muted-fg)">Maths</div></div>
+            <div style="text-align:right"><div style="font-size:12px;font-weight:800">LKR 58k</div><span class="badge-merit" style="font-size:9px">MERIT 94</span></div>
+          </div>
+          <div class="top-tutor-row">
+            <span class="rank">4</span>
+            <div style="width:30px;height:30px;border-radius:50%;background:#FDF4FF;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#7C3AED;flex-shrink:0">NK</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:700">Nadeesha Kumari</div><div style="font-size:11px;color:var(--muted-fg)">Biology</div></div>
+            <div style="text-align:right"><div style="font-size:12px;font-weight:800">LKR 41k</div><span class="badge-merit" style="font-size:9px">MERIT 91</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="align-items:start">
+        <!-- Subject breakdown -->
+        <div class="section-card">
+          <div style="font-size:14px;font-weight:700;margin-bottom:14px">Bookings by subject (June)</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">A/L Mathematics</span><span class="font-mono" style="font-weight:700">487 <span style="color:var(--muted-fg);font-weight:400">(26%)</span></span></div><div class="breakdown-bar"><div class="breakdown-fill" style="width:26%;background:var(--teal)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Chemistry</span><span class="font-mono" style="font-weight:700">342 <span style="color:var(--muted-fg);font-weight:400">(19%)</span></span></div><div class="breakdown-bar"><div class="breakdown-fill" style="width:19%;background:var(--saffron)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Physics</span><span class="font-mono" style="font-weight:700">298 <span style="color:var(--muted-fg);font-weight:400">(16%)</span></span></div><div class="breakdown-bar"><div class="breakdown-fill" style="width:16%;background:var(--primary)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">O/L Mathematics</span><span class="font-mono" style="font-weight:700">256 <span style="color:var(--muted-fg);font-weight:400">(14%)</span></span></div><div class="breakdown-bar"><div class="breakdown-fill" style="width:14%;background:#7C3AED"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">English</span><span class="font-mono" style="font-weight:700">210 <span style="color:var(--muted-fg);font-weight:400">(11%)</span></span></div><div class="breakdown-bar"><div class="breakdown-fill" style="width:11%;background:var(--green)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Others</span><span class="font-mono" style="font-weight:700">254 <span style="color:var(--muted-fg);font-weight:400">(14%)</span></span></div><div class="breakdown-bar"><div class="breakdown-fill" style="width:14%;background:var(--muted-fg)"></div></div></div>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="section-card">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px">Recent platform activity</div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:var(--green-lt);color:var(--green)"><i class="ti ti-shield-check"></i></div>
+            <div><div class="act-text"><strong>Sachini Wickramasinghe</strong> approved as verified tutor (ICT)</div><div class="act-time">8 minutes ago</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:var(--saffron-lt);color:var(--saffron)"><i class="ti ti-calendar-check"></i></div>
+            <div><div class="act-text"><strong>62 new bookings</strong> made in the last 24 hours</div><div class="act-time">Ongoing today</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:var(--red-lt);color:var(--red)"><i class="ti ti-flag"></i></div>
+            <div><div class="act-text">Review by <strong>anonymous</strong> flagged for inappropriate content on Dr. Rohan's profile</div><div class="act-time">2 hours ago</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:var(--teal-lt);color:var(--teal)"><i class="ti ti-user-plus"></i></div>
+            <div><div class="act-text"><strong>38 new registrations</strong> today — 26 students, 12 teachers</div><div class="act-time">Today</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#EEF2FF;color:var(--primary)"><i class="ti ti-coin"></i></div>
+            <div><div class="act-text"><strong>Weekly payouts</strong> processed — LKR 1.8M disbursed to 142 teachers</div><div class="act-time">Yesterday</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:var(--saffron-lt);color:var(--saffron-hv)"><i class="ti ti-alert-triangle"></i></div>
+            <div><div class="act-text">New <strong>dispute raised</strong> — Kasun J. vs. booking #BK-8841</div><div class="act-time">3 hours ago · <a href="#" style="color:var(--saffron);font-weight:600">Review</a></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

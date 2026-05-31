@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Schedule — EduLink SL</title>
+<link rel="stylesheet" href="edulink.css">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<style>
+.sched-controls { background:#fff; border-bottom:1px solid var(--border-dk); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.week-nav { display:flex; align-items:center; gap:10px; }
+.week-btn { width:30px; height:30px; border-radius:var(--r-sm); border:1.5px solid var(--border-dk); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; color:var(--muted-fg); transition:all .15s; }
+.week-btn:hover { background:var(--muted); color:var(--fg); }
+.week-label { font-family:var(--ff-head,'Plus Jakarta Sans',sans-serif); font-size:14px; font-weight:700; }
+.sched-legend { display:flex; gap:14px; }
+.leg { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--muted-fg); }
+.leg-dot { width:10px; height:10px; border-radius:2px; }
+.sched-wrap { padding:20px 28px; overflow-x:auto; }
+.sched-table { width:100%; border-collapse:collapse; min-width:560px; }
+.sched-table th { background:var(--muted); padding:9px 6px; font-size:10px; font-family:var(--ff-mono); font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted-fg); border:1px solid var(--border-dk); text-align:center; }
+.sched-table th.today { background:var(--saffron-lt); color:var(--saffron-hv); }
+.sched-table td { border:1px solid var(--border-dk); padding:3px; height:40px; vertical-align:middle; text-align:center; cursor:pointer; transition:all .15s; }
+.sched-table td.time-col { background:var(--muted); font-family:var(--ff-mono); font-size:9px; color:var(--muted-fg); text-align:right; padding:4px 8px; cursor:default; white-space:nowrap; width:72px; }
+td.sl-open { background:#F0FAF7; }
+td.sl-open:hover { background:var(--teal); }
+td.sl-open:hover .slot-txt { color:#fff; }
+td.sl-booked { background:#EEF2FF; cursor:default; }
+td.sl-blocked { background:var(--muted); cursor:not-allowed; }
+.slot-txt { font-size:9px; font-weight:700; padding:2px 4px; border-radius:2px; }
+.slot-txt.g { color:var(--teal); }
+.slot-txt.b { color:var(--primary); font-size:9px; }
+.slot-txt.x { color:var(--border-dk); }
+.slot-name { font-size:8px; color:var(--primary); display:block; margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:0 2px; }
+.add-slot-bar { background:#fff; border-top:1px solid var(--border-dk); padding:16px 28px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="app-wrap">
+  <nav class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-txt">EDULINK.SL</div><div class="sb-logo-role">Teacher Portal</div></div>
+    <div class="sb-section">Manage</div>
+    <a href="teacher-dashboard.html" class="sb-link"><i class="ti ti-layout-dashboard"></i>Dashboard</a>
+    <a href="teacher-post-class.html" class="sb-link"><i class="ti ti-plus"></i>Post a Class</a>
+    <a href="teacher-schedule.html" class="sb-link active"><i class="ti ti-calendar"></i>Schedule</a>
+    <a href="teacher-messages.html" class="sb-link"><i class="ti ti-message-circle"></i>Messages</a>
+    <a href="teacher-earnings.html" class="sb-link"><i class="ti ti-wallet"></i>Earnings</a>
+    <div class="sb-spacer"></div>
+    <a href="index.html" class="sb-link"><i class="ti ti-logout"></i>Log out</a>
+    <div class="sb-user"><div class="sb-avatar" style="background:var(--saffron-lt);color:var(--saffron-hv)">AP</div><div class="sb-user-info"><div class="sb-user-name">Aruna Perera</div><div class="sb-user-sub">Merit: 98/100</div></div></div>
+  </nav>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="app-topbar-title">Schedule</div>
+      <div class="app-topbar-right"><div class="notif-btn"><i class="ti ti-bell"></i></div></div>
+    </div>
+
+    <div class="sched-controls">
+      <div class="week-nav">
+        <div class="week-btn"><i class="ti ti-chevron-left"></i></div>
+        <div class="week-label">23 – 28 June 2025</div>
+        <div class="week-btn"><i class="ti ti-chevron-right"></i></div>
+        <button class="btn btn-ghost btn-sm">Today</button>
+      </div>
+      <div class="sched-legend">
+        <div class="leg"><div class="leg-dot" style="background:#EEF9F7;border:1px solid var(--teal-md)"></div>Available</div>
+        <div class="leg"><div class="leg-dot" style="background:#EEF2FF"></div>Booked</div>
+        <div class="leg"><div class="leg-dot" style="background:var(--muted)"></div>Blocked</div>
+      </div>
+      <button class="btn btn-saffron btn-sm" onclick="document.getElementById('add-slot-panel').style.display='flex'"><i class="ti ti-plus"></i> Add slots</button>
+    </div>
+
+    <div class="sched-wrap">
+      <table class="sched-table">
+        <thead>
+          <tr>
+            <th style="width:72px">Time</th>
+            <th>Monday 23</th>
+            <th class="today">Tuesday 24 ★</th>
+            <th>Wednesday 25</th>
+            <th>Thursday 26</th>
+            <th>Friday 27</th>
+            <th>Saturday 28</th>
+          </tr>
+        </thead>
+        <tbody id="sched-body">
+          <tr>
+            <td class="time-col">8:00 – 9:00</td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-blocked"><div class="slot-txt x">—</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-blocked"><div class="slot-txt x">—</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+          </tr>
+          <tr>
+            <td class="time-col">9:00 – 10:00</td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Kasun J.</span></td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Nadia W.</span></td>
+            <td class="sl-blocked"><div class="slot-txt x">—</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Ruwani S.</span></td>
+          </tr>
+          <tr>
+            <td class="time-col">10:00 – 11:00</td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-blocked"><div class="slot-txt x">—</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+          </tr>
+          <tr>
+            <td class="time-col">2:00 – 3:00</td>
+            <td class="sl-blocked"><div class="slot-txt x">—</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Sanduni P.</span></td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Malith D.</span></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+          </tr>
+          <tr>
+            <td class="time-col">3:00 – 4:00</td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Ruwini A.</span></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-blocked"><div class="slot-txt x">—</div></td>
+            <td class="sl-blocked"><div class="slot-txt x">—</div></td>
+          </tr>
+          <tr>
+            <td class="time-col">5:00 – 6:00</td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Tharaka B.</span></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Yasith K.</span></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Nimal S.</span></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+          </tr>
+          <tr>
+            <td class="time-col">7:00 – 8:00</td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-booked"><div class="slot-txt b">Booked</div><span class="slot-name">Dinesh F.</span></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+            <td class="sl-open" onclick="toggleSlot(this)"><div class="slot-txt g">Open</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add slot panel -->
+    <div id="add-slot-panel" class="add-slot-bar" style="display:none">
+      <div style="font-size:13px;font-weight:700">Add recurring slot:</div>
+      <select class="form-input" style="width:auto;padding:7px 10px;font-size:13px"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select>
+      <select class="form-input" style="width:auto;padding:7px 10px;font-size:13px"><option>6:00 AM</option><option>7:00 AM</option><option>8:00 AM</option><option selected>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option><option>5:00 PM</option><option>6:00 PM</option><option>7:00 PM</option><option>8:00 PM</option></select>
+      <span style="font-size:13px;color:var(--muted-fg)">to</span>
+      <select class="form-input" style="width:auto;padding:7px 10px;font-size:13px"><option selected>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option><option>5:00 PM</option><option>6:00 PM</option><option>7:00 PM</option><option>8:00 PM</option><option>9:00 PM</option></select>
+      <button class="btn btn-teal btn-sm"><i class="ti ti-plus"></i> Add</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-slot-panel').style.display='none'">Cancel</button>
+    </div>
+
+    <div style="padding:16px 28px;background:#fff;border-top:1px solid var(--border-dk)">
+      <div style="font-size:12px;color:var(--muted-fg)"><i class="ti ti-info-circle" style="font-size:13px;vertical-align:middle"></i> Click any <span style="color:var(--teal);font-weight:600">green slot</span> to block it. Booked slots cannot be changed — contact support to cancel a booking.</div>
+    </div>
+  </div>
+</div>
+<script>
+function toggleSlot(td) {
+  if (td.classList.contains('sl-open')) {
+    td.classList.replace('sl-open','sl-blocked');
+    td.innerHTML = '<div class="slot-txt x">—</div>';
+  } else if (td.classList.contains('sl-blocked')) {
+    td.classList.replace('sl-blocked','sl-open');
+    td.innerHTML = '<div class="slot-txt g">Open</div>';
+    td.onclick = () => toggleSlot(td);
+  }
+}
+</script>
+</body>
+</html>

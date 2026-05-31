@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Earnings — EduLink SL</title>
+<link rel="stylesheet" href="edulink.css">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<style>
+.earn-hero{background:linear-gradient(135deg,#0E163A 0%,#161F4E 60%,#0A3060 100%);border-radius:var(--r-lg);padding:26px;color:#fff;margin-bottom:20px;position:relative;overflow:hidden}
+.earn-hero::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(255,255,255,.04);border-radius:50%}
+.earn-val{font-size:32px;font-weight:800;margin:5px 0 2px}
+.earn-lbl{font-size:10px;font-family:var(--ff-mono);font-weight:700;text-transform:uppercase;letter-spacing:.7px;opacity:.65}
+.earn-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.earn-mini{background:rgba(255,255,255,.08);border-radius:var(--r-sm);padding:13px;backdrop-filter:blur(4px)}
+.earn-mini-val{font-size:17px;font-weight:800;margin-bottom:2px}
+.earn-mini-lbl{font-size:10px;opacity:.65;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.4px}
+.chart-container{height:140px;display:flex;align-items:flex-end;gap:8px;padding:0 4px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-fill{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height .5s ease}
+.bar-val{font-size:9px;font-family:var(--ff-mono);font-weight:700;color:var(--muted-fg)}
+.bar-lbl{font-size:9px;color:var(--muted-fg)}
+.payout-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.payout-row:last-child{border-bottom:none}
+.pr-period{font-size:13px;font-weight:600;flex:1}
+.pr-sessions{font-size:12px;color:var(--muted-fg);width:80px;text-align:center}
+.pr-gross{font-size:13px;color:var(--muted-fg);width:90px;text-align:right}
+.pr-net{font-size:13px;font-weight:700;width:90px;text-align:right}
+.pr-status{width:80px;text-align:right}
+.breakdown-bar{height:7px;background:var(--muted);border-radius:100px;overflow:hidden;flex:1}
+.breakdown-fill{height:100%;border-radius:100px}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+  <nav class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-txt">EDULINK.SL</div><div class="sb-logo-role">Teacher Portal</div></div>
+    <div class="sb-section">Manage</div>
+    <a href="teacher-dashboard.html" class="sb-link"><i class="ti ti-layout-dashboard"></i>Dashboard</a>
+    <a href="teacher-post-class.html" class="sb-link"><i class="ti ti-plus"></i>Post a Class</a>
+    <a href="teacher-schedule.html" class="sb-link"><i class="ti ti-calendar"></i>Schedule</a>
+    <a href="teacher-messages.html" class="sb-link"><i class="ti ti-message-circle"></i>Messages</a>
+    <a href="teacher-earnings.html" class="sb-link active"><i class="ti ti-wallet"></i>Earnings</a>
+    <div class="sb-spacer"></div>
+    <a href="index.html" class="sb-link"><i class="ti ti-logout"></i>Log out</a>
+    <div class="sb-user"><div class="sb-avatar" style="background:var(--saffron-lt);color:var(--saffron-hv)">AP</div><div class="sb-user-info"><div class="sb-user-name">Aruna Perera</div><div class="sb-user-sub">Merit: 98/100</div></div></div>
+  </nav>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="app-topbar-title">Earnings &amp; Payouts</div>
+      <div class="app-topbar-right">
+        <div class="notif-btn"><i class="ti ti-bell"></i></div>
+        <button class="btn btn-ghost btn-sm"><i class="ti ti-download"></i> Export CSV</button>
+      </div>
+    </div>
+
+    <div class="app-content">
+      <!-- Hero earnings card -->
+      <div class="earn-hero">
+        <div class="earn-lbl">All-time earnings</div>
+        <div class="earn-val">LKR 284,500</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+          <span style="background:rgba(255,255,255,.1);border-radius:100px;padding:3px 10px;font-size:11px;display:flex;align-items:center;gap:4px">
+            <i class="ti ti-calendar" style="font-size:10px"></i> Since January 2025
+          </span>
+          <span style="background:rgba(232,147,14,.2);border-radius:100px;padding:3px 10px;font-size:11px;display:flex;align-items:center;gap:4px;color:var(--saffron)">
+            <i class="ti ti-trending-up" style="font-size:10px"></i> +22% vs last month
+          </span>
+        </div>
+        <div class="earn-row">
+          <div class="earn-mini">
+            <div class="earn-mini-val">LKR 48,500</div>
+            <div class="earn-mini-lbl">This month</div>
+          </div>
+          <div class="earn-mini">
+            <div class="earn-mini-val">LKR 12,000</div>
+            <div class="earn-mini-lbl">Pending payout</div>
+          </div>
+          <div class="earn-mini">
+            <div class="earn-mini-val">14</div>
+            <div class="earn-mini-lbl">Sessions in June</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-row stats-4" style="margin-bottom:20px">
+        <div class="stat-box stat-teal">
+          <div class="stat-label"><i class="ti ti-clock"></i> Hours taught</div>
+          <div class="stat-value">84h</div>
+          <div class="stat-sub">this year</div>
+        </div>
+        <div class="stat-box stat-saffron">
+          <div class="stat-label"><i class="ti ti-users"></i> Unique students</div>
+          <div class="stat-value">38</div>
+          <div class="stat-sub" style="color:var(--green)">+6 this month</div>
+        </div>
+        <div class="stat-box stat-primary">
+          <div class="stat-label"><i class="ti ti-percent"></i> Platform commission</div>
+          <div class="stat-value">10%</div>
+          <div class="stat-sub">LKR 5,400 paid Jun</div>
+        </div>
+        <div class="stat-box stat-green">
+          <div class="stat-label"><i class="ti ti-star"></i> Avg session rating</div>
+          <div class="stat-value" style="color:var(--saffron)">4.9</div>
+          <div class="stat-sub" style="color:var(--green)">Top 3% platform</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="align-items:start;margin-bottom:20px">
+        <!-- Monthly chart -->
+        <div class="section-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="font-size:14px;font-weight:700">Monthly earnings (LKR)</div>
+            <select class="form-input" style="width:auto;padding:6px 10px;font-size:12px"><option>2025</option></select>
+          </div>
+          <div class="chart-container" id="earn-chart">
+            <div class="bar-col"><div class="bar-val">18k</div><div class="bar-fill" style="height:37%;background:var(--teal-lt);border-top:2px solid var(--teal)"></div><div class="bar-lbl">Jan</div></div>
+            <div class="bar-col"><div class="bar-val">24k</div><div class="bar-fill" style="height:50%;background:var(--teal-lt);border-top:2px solid var(--teal)"></div><div class="bar-lbl">Feb</div></div>
+            <div class="bar-col"><div class="bar-val">31k</div><div class="bar-fill" style="height:64%;background:var(--teal-lt);border-top:2px solid var(--teal)"></div><div class="bar-lbl">Mar</div></div>
+            <div class="bar-col"><div class="bar-val">28k</div><div class="bar-fill" style="height:58%;background:var(--teal-lt);border-top:2px solid var(--teal)"></div><div class="bar-lbl">Apr</div></div>
+            <div class="bar-col"><div class="bar-val">39k</div><div class="bar-fill" style="height:80%;background:var(--teal-lt);border-top:2px solid var(--teal)"></div><div class="bar-lbl">May</div></div>
+            <div class="bar-col"><div class="bar-val" style="color:var(--saffron);font-weight:800">48.5k</div><div class="bar-fill" style="height:100%;background:var(--saffron-lt);border-top:2px solid var(--saffron)"></div><div class="bar-lbl" style="color:var(--saffron);font-weight:700">Jun</div></div>
+          </div>
+        </div>
+
+        <!-- Subject breakdown -->
+        <div class="section-card">
+          <div style="font-size:14px;font-weight:700;margin-bottom:14px">Earnings by subject</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="font-weight:600">A/L Physics</span><span style="font-weight:700">LKR 28,000 <span style="color:var(--muted-fg);font-weight:400">(58%)</span></span></div>
+              <div class="breakdown-bar"><div class="breakdown-fill" style="width:58%;background:var(--teal)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="font-weight:600">Combined Maths</span><span style="font-weight:700">LKR 14,500 <span style="color:var(--muted-fg);font-weight:400">(30%)</span></span></div>
+              <div class="breakdown-bar"><div class="breakdown-fill" style="width:30%;background:var(--saffron)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="font-weight:600">O/L Mathematics</span><span style="font-weight:700">LKR 6,000 <span style="color:var(--muted-fg);font-weight:400">(12%)</span></span></div>
+              <div class="breakdown-bar"><div class="breakdown-fill" style="width:12%;background:var(--primary)"></div></div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--green-lt);border-radius:var(--r-sm)">
+            <i class="ti ti-wallet" style="font-size:18px;color:var(--green)"></i>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--green)">Next payout: Thursday 26 Jun</div>
+              <div style="font-size:11px;color:var(--green);opacity:.8">LKR 12,000 via bank transfer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payout history table -->
+      <div class="card" style="overflow:hidden">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border-dk);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:14px;font-weight:700">Payout history</div>
+          <div class="tabs" style="margin-bottom:0;border-bottom:none">
+            <div class="tab active" style="padding:4px 10px;font-size:12px">All</div>
+            <div class="tab" style="padding:4px 10px;font-size:12px">Pending</div>
+            <div class="tab" style="padding:4px 10px;font-size:12px">Paid</div>
+          </div>
+        </div>
+        <div style="padding:0 16px 4px">
+          <div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:10px;font-family:var(--ff-mono);font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted-fg)">
+            <div style="flex:1">Period</div>
+            <div style="width:80px;text-align:center">Sessions</div>
+            <div style="width:100px;text-align:right">Gross</div>
+            <div style="width:90px;text-align:right">Commission</div>
+            <div style="width:90px;text-align:right">Net payout</div>
+            <div style="width:80px;text-align:right">Status</div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-period">Jun 16–30, 2025 <span style="font-size:11px;color:var(--muted-fg)">Current</span></div>
+            <div class="pr-sessions">7 sessions</div>
+            <div class="pr-gross">LKR 24,500</div>
+            <div class="pr-gross">LKR 2,450</div>
+            <div class="pr-net" style="color:var(--primary)">LKR 22,050</div>
+            <div class="pr-status"><span class="badge badge-saffron">Pending</span></div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-period">Jun 1–15, 2025</div>
+            <div class="pr-sessions">7 sessions</div>
+            <div class="pr-gross">LKR 24,500</div>
+            <div class="pr-gross">LKR 2,450</div>
+            <div class="pr-net">LKR 22,050</div>
+            <div class="pr-status"><span class="badge badge-green">Paid</span></div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-period">May 16–31, 2025</div>
+            <div class="pr-sessions">6 sessions</div>
+            <div class="pr-gross">LKR 21,000</div>
+            <div class="pr-gross">LKR 2,100</div>
+            <div class="pr-net">LKR 18,900</div>
+            <div class="pr-status"><span class="badge badge-green">Paid</span></div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-period">May 1–15, 2025</div>
+            <div class="pr-sessions">6 sessions</div>
+            <div class="pr-gross">LKR 21,000</div>
+            <div class="pr-gross">LKR 2,100</div>
+            <div class="pr-net">LKR 18,900</div>
+            <div class="pr-status"><span class="badge badge-green">Paid</span></div>
+          </div>
+          <div class="payout-row">
+            <div class="pr-period">Apr 16–30, 2025</div>
+            <div class="pr-sessions">5 sessions</div>
+            <div class="pr-gross">LKR 17,500</div>
+            <div class="pr-gross">LKR 1,750</div>
+            <div class="pr-net">LKR 15,750</div>
+            <div class="pr-status"><span class="badge badge-green">Paid</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Create Account — EduLink SL</title>
+<link rel="stylesheet" href="edulink.css">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
+<style>
+body { background:radial-gradient(ellipse at 40% 60%,#FEF3E0 0%,#FAF9F4 55%); min-height:100vh; }
+.auth-wrap { min-height:calc(100vh - 60px); display:flex; align-items:center; justify-content:center; padding:32px 24px; }
+.auth-card { background:#fff; border-radius:var(--r-xl); border:1px solid var(--border-dk); padding:40px 36px; width:100%; max-width:460px; box-shadow:var(--sh-lg); }
+.auth-logo { font-size:17px; font-weight:800; color:var(--primary); text-align:center; margin-bottom:24px; }
+.auth-title { font-size:22px; font-weight:800; text-align:center; margin-bottom:4px; }
+.auth-sub { font-size:14px; color:var(--muted-fg); text-align:center; margin-bottom:28px; }
+.step-panel { display:none; }
+.step-panel.active { display:block; }
+.role-choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+.role-choice { border:2px solid var(--border-dk); border-radius:var(--r-lg); padding:22px 18px; cursor:pointer; transition:all .2s; background:#fff; text-align:left; }
+.role-choice:hover { border-color:var(--saffron); background:var(--saffron-lt); }
+.role-choice.sel { border-color:var(--saffron); background:var(--saffron-lt); }
+.rc-icon { width:44px; height:44px; border-radius:var(--r); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+.rc-title { font-size:15px; font-weight:700; margin-bottom:4px; }
+.rc-desc { font-size:12px; color:var(--muted-fg); line-height:1.5; }
+.auth-footer { text-align:center; margin-top:18px; font-size:13px; color:var(--muted-fg); }
+.auth-footer a { color:var(--saffron); font-weight:600; cursor:pointer; }
+</style>
+</head>
+<body>
+<header class="pub-nav">
+  <div class="container">
+    <a href="index.html" class="nav-logo">EDULINK.SL</a>
+    <div class="nav-right">
+      <a href="login.html" class="btn btn-ghost btn-sm">Already have an account?</a>
+    </div>
+  </div>
+</header>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">EDULINK.SL</div>
+
+    <!-- Step indicator -->
+    <div class="steps-bar" style="justify-content:center;margin-bottom:24px">
+      <div class="step-dot active" id="sd1">1</div>
+      <div class="step-line" id="sl1"></div>
+      <div class="step-dot" id="sd2">2</div>
+      <div class="step-line" id="sl2"></div>
+      <div class="step-dot" id="sd3">3</div>
+    </div>
+
+    <!-- Step 1: Role selection -->
+    <div class="step-panel active" id="step1">
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-sub">I am joining EduLink SL as a…</p>
+      <div class="role-choice-grid">
+        <div class="role-choice sel" id="rc-student" onclick="pickRole('student')">
+          <div class="rc-icon" style="background:var(--teal-lt)"><i class="ti ti-school" style="font-size:22px;color:var(--teal)"></i></div>
+          <div class="rc-title">Student</div>
+          <div class="rc-desc">Find tutors for O/L, A/L, or university. Book sessions online or in-person.</div>
+        </div>
+        <div class="role-choice" id="rc-teacher" onclick="pickRole('teacher')">
+          <div class="rc-icon" style="background:var(--saffron-lt)"><i class="ti ti-certificate" style="font-size:22px;color:var(--saffron)"></i></div>
+          <div class="rc-title">Tutor</div>
+          <div class="rc-desc">List your subjects, set your schedule, and earn by teaching students.</div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="goStep(2)">Continue →</button>
+    </div>
+
+    <!-- Step 2: Account details -->
+    <div class="step-panel" id="step2">
+      <h1 class="auth-title">Your details</h1>
+      <p class="auth-sub" id="step2-sub">Set up your student account</p>
+      <div class="form-grid-2">
+        <div class="form-group"><label class="form-label">First name</label><input class="form-input" placeholder="Kasun"></div>
+        <div class="form-group"><label class="form-label">Last name</label><input class="form-input" placeholder="Jayasuriya"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email address</label><input class="form-input" type="email" placeholder="you@email.com"></div>
+      <div class="form-group"><label class="form-label">Phone number</label><input class="form-input" type="tel" placeholder="+94 77 123 4567"></div>
+      <div class="form-group">
+        <label class="form-label">District</label>
+        <select class="form-input"><option value="">Select your district</option><option>Colombo</option><option>Kandy</option><option>Gampaha</option><option>Negombo</option><option>Matara</option><option>Galle</option><option>Kurunegala</option><option>Anuradhapura</option><option>Badulla</option><option>Ratnapura</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="Minimum 8 characters"></div>
+      <div class="form-group" style="margin-bottom:20px"><label class="form-label">Confirm password</label><input class="form-input" type="password" placeholder="Repeat password"></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-primary" style="flex:1" onclick="goStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Confirm / Redirect -->
+    <div class="step-panel" id="step3">
+      <div style="text-align:center;padding:16px 0 24px">
+        <div style="width:64px;height:64px;background:var(--green-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--green)"><i class="ti ti-check"></i></div>
+        <h1 class="auth-title">Account created!</h1>
+        <p class="auth-sub" id="step3-msg">You're all set. Continue to your student dashboard.</p>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="finishRegistration()">Go to my dashboard →</button>
+    </div>
+
+    <div class="auth-footer" id="auth-footer-link">Already have an account? <a href="login.html">Sign in</a></div>
+  </div>
+</div>
+
+<script>
+let currentRole = 'student';
+function pickRole(role) {
+  currentRole = role;
+  document.querySelectorAll('.role-choice').forEach(r => r.classList.remove('sel'));
+  document.getElementById('rc-' + role).classList.add('sel');
+}
+function goStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  // Update step indicators
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('sd' + i);
+    dot.classList.remove('active','done');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
+    if (i < 3) {
+      const line = document.getElementById('sl' + i);
+      line.classList.toggle('done', i < n);
+    }
+  }
+  if (n === 2) {
+    document.getElementById('step2-sub').textContent = currentRole === 'teacher' ? 'Set up your tutor account' : 'Set up your student account';
+  }
+  if (n === 3) {
+    document.getElementById('step3-msg').textContent = currentRole === 'teacher'
+      ? 'Next step: upload your verification documents to start listing classes.'
+      : "You're all set. Continue to your student dashboard.";
+    document.getElementById('auth-footer-link').style.display = 'none';
+  }
+}
+function finishRegistration() {
+  if (currentRole === 'teacher') window.location.href = 'teacher-verification.html';
+  else window.location.href = 'student-dashboard.html';
+}
+// Pre-select role from URL
+const params = new URLSearchParams(window.location.search);
+if (params.get('role') === 'teacher') pickRole('teacher');
+</script>
+</body>
+</html>
