@@ -1,0 +1,367 @@
+<script lang="ts">
+</script>
+
+<svelte:head>
+	<title>AI Career Guidance — EduLink SL</title>
+</svelte:head>
+
+<header class="pub-nav">
+	<div class="container">
+		<a href="/" class="nav-logo">EDULINK.SL</a>
+		<nav class="nav-links">
+			<a href="/find-tutors" class="nav-link">Find Tutors</a>
+			<a href="/streams" class="nav-link">Streams</a>
+			<a href="/career-guidance" class="nav-link" style="color: var(--saffron)">Career Guidance</a>
+		</nav>
+		<div class="nav-right">
+			<a href="/auth/login" class="btn btn-ghost btn-sm">Log in</a>
+			<a href="/auth/register?role=teacher" class="btn btn-primary btn-sm">Become a Tutor</a>
+		</div>
+	</div>
+</header>
+
+<!-- Hero -->
+<section class="cg-hero">
+	<div class="container">
+		<div class="pill-badge" style="margin-bottom: 18px"><span class="pill-badge-dot"></span>Powered by OpenAI · Sri Lanka curriculum context</div>
+		<h1>Find your path with <em>AI guidance</em></h1>
+		<p>Not sure which A/L stream to pick or which university degree to pursue? Our AI Career Guide analyses the Sri Lankan curriculum, university cutoffs, and your interests to give you a personalised roadmap.</p>
+		<div class="hero-btns">
+			<a href="/auth/login?redirect=student-ai-chat" class="btn btn-saffron btn-lg"><i class="ti ti-sparkles"></i> Try AI Career Guide — free</a>
+			<a href="/streams" class="btn btn-outline">Browse A/L streams →</a>
+		</div>
+		<div class="hero-stats">
+			<div><div class="hstat-v">12,000+</div><div class="hstat-l">Students guided</div></div>
+			<div><div class="hstat-v">4.8 ★</div><div class="hstat-l">Satisfaction</div></div>
+			<div><div class="hstat-v">25</div><div class="hstat-l">Career paths</div></div>
+		</div>
+	</div>
+</section>
+
+<!-- Features -->
+<section class="features-section">
+	<div class="container">
+		<div style="text-align: center; max-width: 520px; margin: 0 auto 32px">
+			<div style="font-size: 22px; font-weight: 800; margin-bottom: 6px">Everything you need to choose your path</div>
+			<div style="font-size: 14px; color: var(--muted-fg)">Tailored for Sri Lankan students — from O/L to university entrance.</div>
+		</div>
+		<div class="features-grid">
+			<div class="feature-card">
+				<div class="feature-icon" style="background: var(--saffron-lt)"><i class="ti ti-sparkles" style="color: var(--saffron)"></i></div>
+				<div class="feature-title">AI stream advisor</div>
+				<div class="feature-desc">Describe your interests and strengths. The AI recommends the best A/L stream based on your profile and the Sri Lankan university entrance system.</div>
+			</div>
+			<div class="feature-card">
+				<div class="feature-icon" style="background: var(--teal-lt)"><i class="ti ti-building-bank" style="color: var(--teal)"></i></div>
+				<div class="feature-title">University cutoff data</div>
+				<div class="feature-desc">Get the latest z-score cutoffs for UoM, UoC, Peradeniya, SLIIT, and all national universities — updated annually after exam results.</div>
+			</div>
+			<div class="feature-card">
+				<div class="feature-icon" style="background: #EEF2FF"><i class="ti ti-route" style="color: var(--primary)"></i></div>
+				<div class="feature-title">Career roadmaps</div>
+				<div class="feature-desc">See exactly which A/L subjects, z-scores, and degree programmes lead to Engineering, Medicine, Law, IT, and 20+ other career paths.</div>
+			</div>
+			<div class="feature-card">
+				<div class="feature-icon" style="background: var(--green-lt)"><i class="ti ti-users" style="color: var(--green)"></i></div>
+				<div class="feature-title">Tutor recommendations</div>
+				<div class="feature-desc">After identifying your weak subjects, the AI connects you with the best matching verified tutors on EduLink SL in your district.</div>
+			</div>
+			<div class="feature-card">
+				<div class="feature-icon" style="background: var(--saffron-lt)"><i class="ti ti-calendar-stats" style="color: var(--saffron)"></i></div>
+				<div class="feature-title">Study plan generator</div>
+				<div class="feature-desc">Set your exam date and target grade. The AI creates a week-by-week study plan with milestones and subject priorities.</div>
+			</div>
+			<div class="feature-card">
+				<div class="feature-icon" style="background: #FDF4FF"><i class="ti ti-message-chatbot" style="color: #7C3AED"></i></div>
+				<div class="feature-title">Always available</div>
+				<div class="feature-desc">Chat anytime — before or after school. Ask about specific subjects, compare universities, or get motivational support during exam stress.</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Career paths grid -->
+<section class="paths-section">
+	<div class="container">
+		<div class="sec-head" style="margin-bottom: 24px">
+			<div><div class="sec-title">Popular career paths</div><div class="sec-sub" style="margin-top: 4px">Click any path to see required A/L subjects and university options</div></div>
+		</div>
+		<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px">
+			<div class="path-card"><span class="path-icon">💻</span><div class="path-name">Software Engineering</div><div class="path-streams">Physical Science (Maths stream)</div><div class="path-unis"><span class="tag" style="font-size: 10px">UoM</span><span class="tag" style="font-size: 10px">SLIIT</span><span class="tag" style="font-size: 10px">NSBM</span></div></div>
+			<div class="path-card"><span class="path-icon">⚕️</span><div class="path-name">Medicine</div><div class="path-streams">Biological Science</div><div class="path-unis"><span class="tag" style="font-size: 10px">UoC</span><span class="tag" style="font-size: 10px">SJPUM</span><span class="tag" style="font-size: 10px">Peradeniya</span></div></div>
+			<div class="path-card"><span class="path-icon">⚙️</span><div class="path-name">Engineering</div><div class="path-streams">Physical Science</div><div class="path-unis"><span class="tag" style="font-size: 10px">UoM</span><span class="tag" style="font-size: 10px">Peradeniya</span><span class="tag" style="font-size: 10px">UoR</span></div></div>
+			<div class="path-card"><span class="path-icon">⚖️</span><div class="path-name">Law</div><div class="path-streams">Arts or Commerce</div><div class="path-unis"><span class="tag" style="font-size: 10px">UoC</span><span class="tag" style="font-size: 10px">SLIIT</span></div></div>
+			<div class="path-card"><span class="path-icon">📊</span><div class="path-name">Accounting & Finance</div><div class="path-streams">Commerce stream</div><div class="path-unis"><span class="tag" style="font-size: 10px">UoSJ</span><span class="tag" style="font-size: 10px">ICASL</span><span class="tag" style="font-size: 10px">CIMA</span></div></div>
+			<div class="path-card"><span class="path-icon">🏗️</span><div class="path-name">Architecture</div><div class="path-streams">Physical Science</div><div class="path-unis"><span class="tag" style="font-size: 10px">UoM</span><span class="tag" style="font-size: 10px">SLIDA</span></div></div>
+			<div class="path-card"><span class="path-icon">�</span><div class="path-name">Agriculture</div><div class="path-streams">Biological Science</div><div class="path-unis"><span class="tag" style="font-size: 10px">Peradeniya</span><span class="tag" style="font-size: 10px">Wayamba</span></div></div>
+			<div class="path-card" style="background: var(--primary); border-color: var(--primary); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px">
+				<i class="ti ti-sparkles" style="font-size: 24px; color: var(--saffron)"></i>
+				<div style="font-size: 13px; font-weight: 700; color: #fff; text-align: center">Ask AI for your path</div>
+				<a href="/auth/login?redirect=student-ai-chat" class="btn btn-saffron btn-sm">Start chat →</a>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Chat demo -->
+<section class="chat-demo">
+	<div class="container">
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center">
+			<div>
+				<div style="font-size: 30px; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 14px">See how it works</div>
+				<div style="font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.65; margin-bottom: 24px">Students ask natural questions in English or Sinhala. The AI gives specific, accurate answers based on the current Sri Lankan curriculum and university entrance requirements.</div>
+				<a href="/auth/login?redirect=student-ai-chat" class="btn btn-saffron btn-lg"><i class="ti ti-sparkles"></i> Try it free — no credit card</a>
+			</div>
+			<div>
+				<div class="demo-chat">
+					<div class="demo-msg ai">
+						<div class="demo-ai-icon"><i class="ti ti-sparkles"></i></div>
+						<div class="demo-bubble">Hi! I'm your AI Career Guide. Tell me about your interests and I'll help you find the right A/L stream and career path.</div>
+					</div>
+					<div class="demo-msg user">
+						<div class="demo-bubble">I like solving problems and I'm good at maths. Should I do Physical Science?</div>
+					</div>
+					<div class="demo-msg ai">
+						<div class="demo-ai-icon"><i class="ti ti-sparkles"></i></div>
+						<div class="demo-bubble">Physical Science is a great fit if you're strong in Maths! It leads to Engineering, IT, and Architecture at UoM and Peradeniya. The key subjects are Combined Maths, Physics, and Chemistry. What career interests you most — Engineering or IT?</div>
+					</div>
+					<div class="demo-msg user">
+						<div class="demo-bubble">IT — I want to go to UoM</div>
+					</div>
+					<div class="demo-msg ai">
+						<div class="demo-ai-icon"><i class="ti ti-sparkles"></i></div>
+						<div class="demo-bubble">For UoM BSc IT you'll need a z-score of ~1.95+. Focus especially on Combined Maths. I found 3 highly rated Combined Maths tutors near you — want to see them?</div>
+					</div>
+					<input class="demo-input" placeholder="Ask about your career path..." />
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- CTA bar -->
+<div class="cta-bar">
+	<div class="container">
+		<div>
+			<div style="font-size: 18px; font-weight: 800; color: var(--primary)">Ready to find your path?</div>
+			<div style="font-size: 14px; color: rgba(22,31,78,.7); margin-top: 2px">Free for all registered EduLink SL students.</div>
+		</div>
+		<div style="display: flex; gap: 12px">
+			<a href="/auth/register?role=student" class="btn btn-primary btn-lg">Create free account →</a>
+			<a href="/auth/login?redirect=student-ai-chat" class="btn btn-outline btn-lg">Log in & start</a>
+		</div>
+	</div>
+</div>
+
+<footer class="pub-footer">
+	<div class="container">
+		<div class="footer-bottom">
+			<div class="footer-logo" style="font-size: 14px">EDULINK.SL</div>
+			<div>© 2026 EduLink Sri Lanka. Empowering the next generation.</div>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.cg-hero {
+		background: radial-gradient(ellipse at 65% 50%, #FDE8C0 0%, #FEF4E0 35%, #FAF9F4 65%);
+		padding: 68px 0 60px;
+	}
+	.cg-hero h1 {
+		font-size: 40px;
+		font-weight: 800;
+		line-height: 1.1;
+		max-width: 500px;
+		margin-bottom: 12px;
+	}
+	.cg-hero h1 em {
+		font-family: var(--ff-serif);
+		font-style: italic;
+		color: var(--saffron);
+		font-weight: 600;
+	}
+	.cg-hero p {
+		font-size: 16px;
+		color: var(--muted-fg);
+		max-width: 460px;
+		line-height: 1.65;
+		margin-bottom: 28px;
+	}
+	.hero-btns {
+		display: flex;
+		gap: 12px;
+		align-items: center;
+		margin-bottom: 36px;
+	}
+	.hero-stats {
+		display: flex;
+		gap: 28px;
+	}
+	.hstat-v {
+		font-size: 20px;
+		font-weight: 800;
+		color: var(--fg);
+	}
+	.hstat-l {
+		font-size: 10px;
+		font-family: var(--ff-mono);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		color: var(--muted-fg);
+	}
+	.features-section {
+		padding: 60px 0;
+		background: #fff;
+	}
+	.features-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+		margin-top: 32px;
+	}
+	.feature-card {
+		background: var(--bg);
+		border-radius: var(--r-lg);
+		border: 1px solid var(--border-dk);
+		padding: 24px;
+	}
+	.feature-icon {
+		width: 48px;
+		height: 48px;
+		border-radius: var(--r-md);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 24px;
+		margin-bottom: 14px;
+	}
+	.feature-title {
+		font-size: 16px;
+		font-weight: 700;
+		margin-bottom: 6px;
+	}
+	.feature-desc {
+		font-size: 13px;
+		color: var(--muted-fg);
+		line-height: 1.6;
+	}
+	.paths-section {
+		padding: 60px 0;
+		background: var(--bg);
+	}
+	.path-card {
+		background: #fff;
+		border-radius: var(--r-lg);
+		border: 1px solid var(--border-dk);
+		padding: 20px;
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+	.path-card:hover {
+		border-color: var(--saffron);
+		box-shadow: var(--sh-sm);
+		transform: translateY(-2px);
+	}
+	.path-icon {
+		font-size: 28px;
+		margin-bottom: 12px;
+		display: block;
+	}
+	.path-name {
+		font-size: 15px;
+		font-weight: 800;
+		margin-bottom: 4px;
+	}
+	.path-streams {
+		font-size: 12px;
+		color: var(--muted-fg);
+		margin-bottom: 8px;
+	}
+	.path-unis {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+	.chat-demo {
+		background: var(--primary);
+		padding: 60px 0;
+		position: relative;
+		overflow: hidden;
+	}
+	.chat-demo::before {
+		content: '';
+		position: absolute;
+		top: -80px;
+		right: -80px;
+		width: 300px;
+		height: 300px;
+		background: radial-gradient(ellipse, rgba(100,20,50,.3) 0%, transparent 65%);
+	}
+	.demo-chat {
+		background: rgba(255,255,255,.06);
+		border: 1px solid rgba(255,255,255,.1);
+		border-radius: var(--r-xl);
+		padding: 24px;
+		max-width: 520px;
+		backdrop-filter: blur(8px);
+	}
+	.demo-msg {
+		display: flex;
+		gap: 10px;
+		margin-bottom: 12px;
+	}
+	.demo-msg.user {
+		flex-direction: row-reverse;
+	}
+	.demo-bubble {
+		padding: 11px 15px;
+		border-radius: 14px;
+		font-size: 13px;
+		line-height: 1.55;
+		max-width: 80%;
+	}
+	.demo-msg.ai .demo-bubble {
+		background: rgba(255,255,255,.12);
+		color: #fff;
+		border-radius: 14px 14px 14px 4px;
+	}
+	.demo-msg.user .demo-bubble {
+		background: var(--saffron);
+		color: #fff;
+		border-radius: 14px 14px 4px 14px;
+	}
+	.demo-ai-icon {
+		width: 28px;
+		height: 28px;
+		background: rgba(255,255,255,.1);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 13px;
+		color: var(--saffron);
+		flex-shrink: 0;
+		margin-top: 2px;
+	}
+	.demo-input {
+		background: rgba(255,255,255,.08);
+		border: 1px solid rgba(255,255,255,.15);
+		border-radius: 100px;
+		padding: 11px 16px;
+		font-size: 13px;
+		color: rgba(255,255,255,.6);
+		width: 100%;
+		font-family: var(--ff);
+	}
+	.cta-bar {
+		background: var(--saffron);
+		padding: 28px 0;
+	}
+	.cta-bar .container {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+	}
+</style>
