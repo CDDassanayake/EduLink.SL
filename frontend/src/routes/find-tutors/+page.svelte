@@ -1,0 +1,479 @@
+<script lang="ts">
+	let searchSubject = $state('');
+	let selectedDistrict = $state('All Districts');
+</script>
+
+<svelte:head>
+	<title>Find Tutors — EduLink SL</title>
+</svelte:head>
+
+<header class="pub-nav">
+	<div class="container">
+		<a href="/" class="nav-logo">EDULINK.SL</a>
+		<nav class="nav-links">
+			<a href="/find-tutors" class="nav-link" style="color: var(--saffron)">Find Tutors</a>
+			<a href="/streams" class="nav-link">Streams</a>
+			<a href="/career-guidance" class="nav-link">Career Guidance</a>
+		</nav>
+		<div class="nav-right">
+			<a href="/auth/login" class="btn btn-ghost btn-sm">Log in</a>
+			<a href="/auth/register?role=teacher" class="btn btn-primary btn-sm">Become a Tutor</a>
+		</div>
+	</div>
+</header>
+
+<!-- Search bar -->
+<div class="search-bar-strip">
+	<div class="container">
+		<div class="search-bar-inner">
+			<div class="sb-field" style="flex: 2">
+				<i class="ti ti-search"></i>
+				<input type="text" placeholder="Subject, e.g. Combined Maths, Physics..." bind:value={searchSubject} />
+			</div>
+			<div class="sb-field">
+				<i class="ti ti-map-pin"></i>
+				<select bind:value={selectedDistrict}>
+					<option>All Districts</option>
+					<option>Colombo</option>
+					<option>Kandy</option>
+					<option>Gampaha</option>
+					<option>Negombo</option>
+					<option>Matara</option>
+					<option>Galle</option>
+					<option>Kurunegala</option>
+				</select>
+			</div>
+			<button class="btn btn-saffron btn-sm">Search</button>
+		</div>
+	</div>
+</div>
+
+<!-- Login notice -->
+<div class="container" style="padding-top: 16px">
+	<div class="login-gate">
+		<div class="login-gate-txt"><i class="ti ti-lock" style="font-size: 14px; margin-right: 5px"></i>Log in to view full tutor profiles, check availability, and book sessions.</div>
+		<a href="/auth/login?redirect=find-tutors" class="btn btn-saffron btn-sm">Log in to book</a>
+	</div>
+</div>
+
+<div class="page-layout" style="max-width: 1100px; margin: 0 auto; padding: 0 24px">
+	<!-- Filters -->
+	<div class="filter-col">
+		<div class="fl-head">
+			<div class="fl-title">Filters</div>
+			<span class="fl-clear">Clear all</span>
+		</div>
+		<div class="fl-section">
+			<div class="fl-section-title">A/L Stream</div>
+			<label class="fl-option"><input type="checkbox" checked />Physical Science<span class="fl-count">142</span></label>
+			<label class="fl-option"><input type="checkbox" />Biological Science<span class="fl-count">98</span></label>
+			<label class="fl-option"><input type="checkbox" />Commerce<span class="fl-count">87</span></label>
+			<label class="fl-option"><input type="checkbox" />Arts & Languages<span class="fl-count">64</span></label>
+			<label class="fl-option"><input type="checkbox" />O/L (Grade 9–11)<span class="fl-count">210</span></label>
+			<label class="fl-option"><input type="checkbox" />University<span class="fl-count">43</span></label>
+		</div>
+		<div class="fl-section">
+			<div class="fl-section-title">Mode</div>
+			<label class="fl-option"><input type="checkbox" checked />Online<span class="fl-count">284</span></label>
+			<label class="fl-option"><input type="checkbox" checked />In-person<span class="fl-count">196</span></label>
+			<label class="fl-option"><input type="checkbox" />Home visit<span class="fl-count">78</span></label>
+			<label class="fl-option"><input type="checkbox" />Group classes<span class="fl-count">115</span></label>
+		</div>
+		<div class="fl-section">
+			<div class="fl-section-title">Min rating</div>
+			<label class="fl-option"><input type="radio" name="rating" checked />4.5+ ★★★★★</label>
+			<label class="fl-option"><input type="radio" name="rating" />4.0+ ★★★★</label>
+			<label class="fl-option"><input type="radio" name="rating" />Any rating</label>
+		</div>
+		<div class="fl-section">
+			<div class="fl-section-title">Price per hour</div>
+			<div style="font-size: 12px; color: var(--muted-fg); margin-bottom: 6px">Up to LKR <strong style="color: var(--fg)">5,000</strong></div>
+			<input type="range" min="500" max="10000" value="5000" style="width: 100%; accent-color: var(--saffron)" />
+			<div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--muted-fg); margin-top: 4px"><span>LKR 500</span><span>LKR 10,000</span></div>
+		</div>
+		<div class="fl-section">
+			<div class="fl-section-title">Availability</div>
+			<label class="fl-option"><input type="checkbox" />Available today</label>
+			<label class="fl-option"><input type="checkbox" checked />Available this week</label>
+			<label class="fl-option"><input type="checkbox" />Weekends only</label>
+		</div>
+		<div class="fl-section">
+			<div class="fl-section-title">Verified only</div>
+			<label class="fl-option"><input type="checkbox" checked />Show verified tutors only</label>
+		</div>
+	</div>
+
+	<!-- Results -->
+	<div class="results-col">
+		<div class="results-header">
+			<div class="results-count"><strong>48 tutors</strong> found for Physical Science</div>
+			<select class="sort-select">
+				<option>Sort: Top Rated</option>
+				<option>Sort: Price — Low to High</option>
+				<option>Sort: Most Reviews</option>
+				<option>Sort: Nearest</option>
+			</select>
+		</div>
+		<div class="tutors-list">
+			<a href="/auth/login?redirect=tutor-profile" style="display: block">
+				<div class="tutor-list-card">
+					<div class="tlc-photo" style="background: #EEF2FF; color: #3B4FD8">AP</div>
+					<div class="tlc-body">
+						<div class="tlc-top">
+							<div>
+								<div class="tlc-name">Aruna Perera <span class="verified-tick"></span></div>
+								<div class="tlc-specialty">Physics Specialist (A/L) · BSc Physics, University of Peradeniya</div>
+								<div class="tlc-metrics">
+									<span class="badge-merit">MERIT 98</span>
+									<span class="tlc-rating"><span style="color: var(--saffron)">★</span> 4.9</span>
+									<span style="font-size: 12px; color: var(--muted-fg)">(120 reviews)</span>
+									<span class="badge badge-teal">Verified</span>
+								</div>
+							</div>
+							<div class="tlc-right">
+								<div class="tlc-price">LKR 3,500<span>/hr</span></div>
+								<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
+							</div>
+						</div>
+						<div class="tlc-tags">
+							<span class="tag">Colombo 07</span><span class="tag">Individual</span><span class="tag">Online</span><span class="tag">Theory + Revision</span><span class="tag">Past Papers</span>
+						</div>
+					</div>
+				</div>
+			</a>
+
+			<a href="/auth/login?redirect=tutor-profile" style="display: block">
+				<div class="tutor-list-card">
+					<div class="tlc-photo" style="background: #FFF0E0; color: #A06000">DJ</div>
+					<div class="tlc-body">
+						<div class="tlc-top">
+							<div>
+								<div class="tlc-name">Dilini Jayasuriya <span class="verified-tick"></span></div>
+								<div class="tlc-specialty">Combined Maths (A/L) · BSc Mathematics, University of Colombo</div>
+								<div class="tlc-metrics">
+									<span class="badge-merit">MERIT 94</span>
+									<span class="tlc-rating"><span style="color: var(--saffron)">★</span> 5.0</span>
+									<span style="font-size: 12px; color: var(--muted-fg)">(85 reviews)</span>
+									<span class="badge badge-teal">Verified</span>
+								</div>
+							</div>
+							<div class="tlc-right">
+								<div class="tlc-price">LKR 2,000<span>/hr</span></div>
+								<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
+							</div>
+						</div>
+						<div class="tlc-tags">
+							<span class="tag">Kandy</span><span class="tag">Online</span><span class="tag">Group Classes</span><span class="tag">A/L Science</span>
+						</div>
+					</div>
+				</div>
+			</a>
+
+			<a href="/auth/login?redirect=tutor-profile" style="display: block">
+				<div class="tutor-list-card">
+					<div class="tlc-photo" style="background: #F0FDF4; color: #166534">RS</div>
+					<div class="tlc-body">
+						<div class="tlc-top">
+							<div>
+								<div class="tlc-name">Dr. Rohan Silva <span class="verified-tick"></span></div>
+								<div class="tlc-specialty">Chemistry Specialist (A/L) · PhD Chemistry, University of Kelaniya</div>
+								<div class="tlc-metrics">
+									<span class="badge-merit">MERIT 99</span>
+									<span class="tlc-rating"><span style="color: var(--saffron)">★</span> 4.9</span>
+									<span style="font-size: 12px; color: var(--muted-fg)">(310 reviews)</span>
+									<span class="badge badge-teal">Verified</span>
+								</div>
+							</div>
+							<div class="tlc-right">
+								<div class="tlc-price">LKR 4,500<span>/hr</span></div>
+								<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
+							</div>
+						</div>
+						<div class="tlc-tags">
+							<span class="tag">Gampaha</span><span class="tag">Physical</span><span class="tag">Ex-Paper Marker</span><span class="tag">Individual</span>
+						</div>
+					</div>
+				</div>
+			</a>
+
+			<a href="/auth/login?redirect=tutor-profile" style="display: block">
+				<div class="tutor-list-card">
+					<div class="tlc-photo" style="background: #FDF4FF; color: #7C3AED">NK</div>
+					<div class="tlc-body">
+						<div class="tlc-top">
+							<div>
+								<div class="tlc-name">Nadeesha Kumari <span class="verified-tick"></span></div>
+								<div class="tlc-specialty">Biology & Chemistry (A/L) · BSc Botany, University of Peradeniya</div>
+								<div class="tlc-metrics">
+									<span class="badge-merit">MERIT 91</span>
+									<span class="tlc-rating"><span style="color: var(--saffron)">★</span> 4.7</span>
+									<span style="font-size: 12px; color: var(--muted-fg)">(56 reviews)</span>
+									<span class="badge badge-teal">Verified</span>
+								</div>
+							</div>
+							<div class="tlc-right">
+								<div class="tlc-price">LKR 2,500<span>/hr</span></div>
+								<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
+							</div>
+						</div>
+						<div class="tlc-tags">
+							<span class="tag">Negombo</span><span class="tag">Online</span><span class="tag">In-person</span><span class="tag">Biological Science</span>
+						</div>
+					</div>
+				</div>
+			</a>
+		</div>
+		<div style="text-align: center; padding: 24px 0">
+			<button class="btn btn-ghost">Load more tutors</button>
+		</div>
+	</div>
+</div>
+
+<footer class="pub-footer" style="margin-top: 0">
+	<div class="container">
+		<div class="footer-bottom">
+			<div class="footer-logo" style="font-size: 14px">EDULINK.SL</div>
+			<div>© 2026 EduLink Sri Lanka. Empowering the next generation.</div>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.search-bar-strip {
+		background: #fff;
+		border-bottom: 1px solid var(--border-dk);
+		padding: 16px 0;
+	}
+	.search-bar-inner {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+	}
+	.sb-field {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		background: var(--bg);
+		border: 1.5px solid var(--border-dk);
+		border-radius: var(--r-sm);
+		padding: 9px 14px;
+		flex: 1;
+		transition: border-color 0.15s;
+	}
+	.sb-field:focus-within {
+		border-color: var(--saffron);
+	}
+	.sb-field i {
+		font-size: 16px;
+		color: var(--muted-fg);
+		flex-shrink: 0;
+	}
+	.sb-field input,
+	.sb-field select {
+		border: none;
+		outline: none;
+		font-size: 13px;
+		color: var(--fg);
+		font-family: var(--ff);
+		background: transparent;
+		width: 100%;
+	}
+	.page-layout {
+		display: grid;
+		grid-template-columns: 240px 1fr;
+		gap: 0;
+		min-height: calc(100vh - 60px);
+	}
+	.filter-col {
+		background: #fff;
+		border-right: 1px solid var(--border-dk);
+		padding: 20px;
+		overflow-y: auto;
+	}
+	.fl-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+	.fl-title {
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--fg);
+	}
+	.fl-clear {
+		font-size: 12px;
+		color: var(--saffron);
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.fl-section {
+		margin-bottom: 20px;
+	}
+	.fl-section-title {
+		font-size: 10px;
+		font-family: var(--ff-mono);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		color: var(--muted-fg);
+		margin-bottom: 10px;
+	}
+	.fl-option {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 5px 0;
+		cursor: pointer;
+		font-size: 13px;
+		color: var(--fg);
+	}
+	.fl-option input {
+		accent-color: var(--saffron);
+		cursor: pointer;
+	}
+	.fl-count {
+		margin-left: auto;
+		font-size: 11px;
+		font-family: var(--ff-mono);
+		background: var(--muted);
+		color: var(--muted-fg);
+		padding: 1px 7px;
+		border-radius: 100px;
+		font-weight: 600;
+	}
+	.results-col {
+		background: var(--bg);
+		padding: 20px 24px;
+	}
+	.results-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 16px;
+	}
+	.results-count {
+		font-size: 13px;
+		color: var(--muted-fg);
+	}
+	.results-count strong {
+		color: var(--fg);
+		font-weight: 700;
+	}
+	.sort-select {
+		border: 1.5px solid var(--border-dk);
+		border-radius: var(--r-sm);
+		padding: 7px 12px;
+		font-size: 13px;
+		font-family: var(--ff);
+		color: var(--fg);
+		background: #fff;
+	}
+	.tutors-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+	.tutor-list-card {
+		background: #fff;
+		border-radius: var(--r);
+		border: 1px solid var(--border-dk);
+		padding: 20px;
+		display: flex;
+		gap: 16px;
+		align-items: flex-start;
+		transition: all 0.2s;
+		cursor: pointer;
+	}
+	.tutor-list-card:hover {
+		box-shadow: var(--sh-md);
+		border-color: rgba(232, 147, 14, 0.3);
+		transform: translateY(-1px);
+	}
+	.tlc-photo {
+		width: 64px;
+		height: 64px;
+		border-radius: var(--r-sm);
+		background: var(--muted);
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 22px;
+		font-weight: 800;
+		color: var(--primary);
+	}
+	.tlc-body {
+		flex: 1;
+		min-width: 0;
+	}
+	.tlc-top {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 6px;
+	}
+	.tlc-name {
+		font-size: 16px;
+		font-weight: 700;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+	.tlc-specialty {
+		font-size: 13px;
+		color: var(--muted-fg);
+		margin-bottom: 8px;
+	}
+	.tlc-metrics {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 8px;
+		flex-wrap: wrap;
+	}
+	.tlc-rating {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		font-size: 13px;
+		font-weight: 600;
+	}
+	.tlc-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	.tlc-right {
+		text-align: right;
+		flex-shrink: 0;
+	}
+	.tlc-price {
+		font-size: 17px;
+		font-weight: 800;
+		color: var(--fg);
+		margin-bottom: 8px;
+	}
+	.tlc-price span {
+		font-size: 12px;
+		font-weight: 400;
+		color: var(--muted-fg);
+	}
+	.login-gate {
+		background: var(--saffron-lt);
+		border: 1.5px solid rgba(232, 147, 14, 0.3);
+		border-radius: var(--r);
+		padding: 14px 18px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+	.login-gate-txt {
+		font-size: 13px;
+		color: var(--saffron-hv);
+		font-weight: 500;
+	}
+</style>
