@@ -87,13 +87,13 @@
 		<div class="form-group" style="margin-bottom: 6px">
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px">
 				<label class="form-label" for="password" style="margin-bottom: 0">Password</label>
-				<a href="/auth/forgot-password" style="font-size: 12px; color: var(--saffron); font-weight: 600">Forgot password?</a>
+				<a href="/auth/forgot-password" style="font-size: 12px; color: var(--color-saffron); font-weight: 600">Forgot password?</a>
 			</div>
 			<input class="form-input" id="password" type="password" value="••••••••••" />
 		</div>
 		<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px">
-			<input type="checkbox" id="remember" checked style="accent-color: var(--saffron); cursor: pointer" />
-			<label for="remember" style="font-size: 13px; color: var(--muted-fg)">Remember me for 30 days</label>
+			<input type="checkbox" id="remember" checked style="accent-color: var(--color-saffron); cursor: pointer" />
+			<label for="remember" style="font-size: 13px; color: var(--color-muted-fg)">Remember me for 30 days</label>
 		</div>
 		<button class="btn btn-primary btn-full" onclick={handleLogin}>Sign In →</button>
 		<div class="auth-footer">Don't have an account? <a href="/auth/register">Sign up free</a></div>
@@ -101,6 +101,10 @@
 </div>
 
 <style>
+	:global(body) {
+		background: radial-gradient(ellipse at 60% 30%, #FEF3E0 0%, #FAF9F4 55%);
+		min-height: 100vh;
+	}
 	.auth-wrap {
 		min-height: calc(100vh - 60px);
 		display: flex;
@@ -110,17 +114,17 @@
 	}
 	.auth-card {
 		background: #fff;
-		border-radius: var(--r-xl);
-		border: 1px solid var(--border-dk);
+		border-radius: var(--radius-xl);
+		border: 1px solid var(--color-border-dark);
 		padding: 40px 36px;
 		width: 100%;
 		max-width: 400px;
-		box-shadow: var(--sh-lg);
+		box-shadow: var(--shadow-lg);
 	}
 	.auth-logo {
 		font-size: 17px;
 		font-weight: 800;
-		color: var(--primary);
+		color: var(--color-primary);
 		text-align: center;
 		margin-bottom: 28px;
 		letter-spacing: -0.3px;
@@ -133,7 +137,7 @@
 	}
 	.auth-sub {
 		font-size: 14px;
-		color: var(--muted-fg);
+		color: var(--color-muted-fg);
 		text-align: center;
 		margin-bottom: 28px;
 	}
@@ -144,32 +148,32 @@
 		justify-content: center;
 		gap: 10px;
 		padding: 11px 16px;
-		border-radius: var(--r-sm);
-		border: 1.5px solid var(--border-dk);
+		border-radius: var(--radius-sm);
+		border: 1.5px solid var(--color-border-dark);
 		background: #fff;
 		font-size: 14px;
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.15s;
-		font-family: var(--ff);
+		font-family: var(--font-sans);
 		margin-bottom: 10px;
 	}
 	.social-btn:hover {
-		background: var(--muted);
+		background: var(--color-muted);
 	}
 	.role-demo {
-		background: var(--muted);
-		border-radius: var(--r);
+		background: var(--color-muted);
+		border-radius: var(--radius);
 		padding: 14px;
 		margin-bottom: 20px;
 	}
 	.role-demo-lbl {
 		font-size: 10px;
-		font-family: var(--ff-mono);
+		font-family: var(--font-mono);
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.6px;
-		color: var(--muted-fg);
+		color: var(--color-muted-fg);
 		margin-bottom: 8px;
 	}
 	.role-grid {
@@ -179,25 +183,25 @@
 	}
 	.role-opt {
 		background: #fff;
-		border: 1.5px solid var(--border-dk);
-		border-radius: var(--r-sm);
+		border: 1.5px solid var(--color-border-dark);
+		border-radius: var(--radius-sm);
 		padding: 8px 6px;
 		text-align: center;
 		cursor: pointer;
 		transition: all 0.15s;
 		font-size: 11px;
 		font-weight: 600;
-		color: var(--muted-fg);
+		color: var(--color-muted-fg);
 		width: 100%;
 	}
 	.role-opt:hover {
-		border-color: var(--saffron);
-		color: var(--saffron);
+		border-color: var(--color-saffron);
+		color: var(--color-saffron);
 	}
 	.role-opt.sel {
-		border-color: var(--saffron);
-		background: var(--saffron-lt);
-		color: var(--saffron-hv);
+		border-color: var(--color-saffron);
+		background: var(--color-saffron-light);
+		color: var(--color-saffron-hover);
 	}
 	.role-opt i {
 		display: block;
@@ -208,10 +212,10 @@
 		text-align: center;
 		margin-top: 20px;
 		font-size: 13px;
-		color: var(--muted-fg);
+		color: var(--color-muted-fg);
 	}
 	.auth-footer a {
-		color: var(--saffron);
+		color: var(--color-saffron);
 		font-weight: 600;
 		cursor: pointer;
 	}
