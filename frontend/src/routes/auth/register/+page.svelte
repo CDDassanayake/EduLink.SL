@@ -6,11 +6,9 @@
 	let selectedRole = $state('student');
 
 	// Pre-select role from URL if provided
-	$page.subscribe((p) => {
-		if (p.url.searchParams.get('role') === 'teacher') {
-			selectedRole = 'teacher';
-		}
-	});
+	if ($page.url.searchParams.get('role') === 'teacher') {
+		selectedRole = 'teacher';
+	}
 
 	function pickRole(role: string) {
 		selectedRole = role;
@@ -63,8 +61,8 @@
 					class="role-choice {selectedRole === 'student' ? 'sel' : ''}"
 					onclick={() => pickRole('student')}
 				>
-					<div class="rc-icon" style="background: var(--teal-lt)">
-						<i class="ti ti-school" style="font-size: 22px; color: var(--teal)"></i>
+					<div class="rc-icon" style="background: var(--color-teal-light)">
+						<i class="ti ti-school" style="font-size: 22px; color: var(--color-teal)"></i>
 					</div>
 					<div class="rc-title">Student</div>
 					<div class="rc-desc">Find tutors for O/L, A/L, or university. Book sessions online or in-person.</div>
@@ -74,8 +72,8 @@
 					class="role-choice {selectedRole === 'teacher' ? 'sel' : ''}"
 					onclick={() => pickRole('teacher')}
 				>
-					<div class="rc-icon" style="background: var(--saffron-lt)">
-						<i class="ti ti-certificate" style="font-size: 22px; color: var(--saffron)"></i>
+					<div class="rc-icon" style="background: var(--color-saffron-light)">
+						<i class="ti ti-certificate" style="font-size: 22px; color: var(--color-saffron)"></i>
 					</div>
 					<div class="rc-title">Tutor</div>
 					<div class="rc-desc">List your subjects, set your schedule, and earn by teaching students.</div>
@@ -142,7 +140,7 @@
 		{#if currentStep === 3}
 			<div style="text-align: center; padding: 16px 0 24px">
 				<div
-					style="width: 64px; height: 64px; background: var(--green-lt); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; color: var(--green)"
+					style="width: 64px; height: 64px; background: var(--color-green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; color: var(--color-green)"
 				>
 					<i class="ti ti-check"></i>
 				</div>
@@ -163,6 +161,10 @@
 </div>
 
 <style>
+	:global(body) {
+		background: radial-gradient(ellipse at 40% 60%, #FEF3E0 0%, #FAF9F4 55%);
+		min-height: 100vh;
+	}
 	.auth-wrap {
 		min-height: calc(100vh - 60px);
 		display: flex;
@@ -172,17 +174,17 @@
 	}
 	.auth-card {
 		background: #fff;
-		border-radius: var(--r-xl);
-		border: 1px solid var(--border-dk);
+		border-radius: var(--radius-xl);
+		border: 1px solid var(--color-border-dark);
 		padding: 40px 36px;
 		width: 100%;
 		max-width: 460px;
-		box-shadow: var(--sh-lg);
+		box-shadow: var(--shadow-lg);
 	}
 	.auth-logo {
 		font-size: 17px;
 		font-weight: 800;
-		color: var(--primary);
+		color: var(--color-primary);
 		text-align: center;
 		margin-bottom: 24px;
 	}
@@ -194,9 +196,50 @@
 	}
 	.auth-sub {
 		font-size: 14px;
-		color: var(--muted-fg);
+		color: var(--color-muted-fg);
 		text-align: center;
 		margin-bottom: 28px;
+	}
+	/* Step indicator styles */
+	.steps-bar {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 28px;
+	}
+	.step-dot {
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 12px;
+		font-weight: 700;
+		border: 2px solid var(--color-border-dark);
+		color: var(--color-muted-fg);
+		flex-shrink: 0;
+		font-family: var(--font-mono);
+		transition: all 0.2s;
+	}
+	.step-dot.done {
+		background: var(--color-green);
+		border-color: var(--color-green);
+		color: #fff;
+	}
+	.step-dot.active {
+		background: var(--color-saffron);
+		border-color: var(--color-saffron);
+		color: #fff;
+	}
+	.step-line {
+		flex: 1;
+		height: 2px;
+		background: var(--color-border-dark);
+		max-width: 48px;
+	}
+	.step-line.done {
+		background: var(--color-green);
 	}
 	.role-choice-grid {
 		display: grid;
@@ -205,30 +248,30 @@
 		margin-bottom: 20px;
 	}
 	.role-choice {
-		border: 2px solid var(--border-dk);
-		border-radius: var(--r-lg);
+		border: 2px solid var(--color-border-dark);
+		border-radius: var(--radius-lg);
 		padding: 22px 18px;
 		cursor: pointer;
 		transition: all 0.2s;
 		background: #fff;
 		text-align: left;
-		font-family: var(--ff);
+		font-family: var(--font-sans);
 		font-size: inherit;
 		width: 100%;
 		display: block;
 	}
 	.role-choice:hover {
-		border-color: var(--saffron);
-		background: var(--saffron-lt);
+		border-color: var(--color-saffron);
+		background: var(--color-saffron-light);
 	}
 	.role-choice.sel {
-		border-color: var(--saffron);
-		background: var(--saffron-lt);
+		border-color: var(--color-saffron);
+		background: var(--color-saffron-light);
 	}
 	.rc-icon {
 		width: 44px;
 		height: 44px;
-		border-radius: var(--r);
+		border-radius: var(--radius);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -241,17 +284,17 @@
 	}
 	.rc-desc {
 		font-size: 12px;
-		color: var(--muted-fg);
+		color: var(--color-muted-fg);
 		line-height: 1.5;
 	}
 	.auth-footer {
 		text-align: center;
 		margin-top: 18px;
 		font-size: 13px;
-		color: var(--muted-fg);
+		color: var(--color-muted-fg);
 	}
 	.auth-footer a {
-		color: var(--saffron);
+		color: var(--color-saffron);
 		font-weight: 600;
 		cursor: pointer;
 	}
