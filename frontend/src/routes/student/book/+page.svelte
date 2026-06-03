@@ -1,0 +1,309 @@
+<script lang="ts">
+	import { goto } from '$app/navigation';
+
+	let showConfirm = $state(false);
+	let cardNumber = $state('');
+
+	function formatCard(el: HTMLInputElement) {
+		let v = el.value.replace(/\D/g, '').substring(0, 16);
+		el.value = v.replace(/(.{4})/g, '$1 ').trim();
+	}
+
+	function confirmBooking() {
+		showConfirm = true;
+	}
+
+	function goToDashboard() {
+		goto('/student/dashboard');
+	}
+</script>
+
+<svelte:head>
+	<title>Book Session — EduLink SL</title>
+</svelte:head>
+
+<div class="book-wrap">
+	<div class="steps-bar" style="margin-bottom: 28px">
+		<div class="step-dot done">1</div>
+		<div class="step-line done"></div>
+		<div class="step-dot active">2</div>
+		<div class="step-line"></div>
+		<div class="step-dot">3</div>
+		<span style="font-size: 13px; color: var(--muted-fg); margin-left: 8px">Review &amp; Pay</span>
+	</div>
+
+	<div class="book-title">Confirm your booking</div>
+	<div class="book-sub">Review the details below and complete payment to confirm your session.</div>
+
+	<div class="book-layout">
+		<div class="book-main">
+			<!-- Session summary -->
+			<div class="book-section">
+				<div class="bs-title"><i class="ti ti-calendar-check"></i> Session details</div>
+				<div class="tutor-summary">
+					<div class="ts-avatar">AP</div>
+					<div>
+						<div style="font-size: 14px; font-weight: 700">Aruna Perera</div>
+						<div style="font-size: 12px; color: var(--muted-fg)">Physics Specialist (A/L)</div>
+					</div>
+					<div style="margin-left: auto"><span class="badge-merit">MERIT 98</span></div>
+				</div>
+				<div class="sel-slot">
+					<i class="ti ti-calendar" style="font-size: 20px; color: var(--saffron)"></i>
+					<div>
+						<div style="font-size: 13px; font-weight: 700">Tuesday, 24 June 2025</div>
+						<div style="font-size: 12px; color: var(--muted-fg)">9:00 AM – 10:00 AM (1 hour)</div>
+					</div>
+					<a href="/find-tutors" style="margin-left: auto; font-size: 12px; color: var(--saffron); font-weight: 600">Change</a>
+				</div>
+				<div style="display: flex; gap: 10px; flex-wrap: wrap">
+					<span class="badge badge-primary"><i class="ti ti-device-laptop"></i> Online session</span>
+					<span class="badge badge-teal">Single session</span>
+					<span class="badge badge-green">Free cancellation until 24h before</span>
+				</div>
+			</div>
+
+			<!-- Payment details -->
+			<div class="book-section">
+				<div class="bs-title"><i class="ti ti-credit-card"></i> Payment details</div>
+				<div class="alert alert-info" style="margin-bottom: 16px"><i class="ti ti-lock"></i> Payments are processed securely by Stripe. EduLink SL never stores your card details.</div>
+				<div class="form-group">
+					<label class="form-label">Cardholder name</label>
+					<input class="form-input" placeholder="Kasun Jayasuriya" value="Kasun Jayasuriya" />
+				</div>
+				<div class="form-group">
+					<label class="form-label">Card number</label>
+					<input class="card-input" placeholder="1234 5678 9012 3456" maxlength="19" bind:value={cardNumber} oninput={(e) => formatCard(e.target as HTMLInputElement)} />
+				</div>
+				<div class="card-row">
+					<div class="form-group">
+						<label class="form-label">Expiry date</label>
+						<input class="card-input" placeholder="MM / YY" maxlength="7" />
+					</div>
+					<div class="form-group">
+						<label class="form-label">CVV</label>
+						<input class="card-input" placeholder="•••" maxlength="3" type="password" />
+					</div>
+				</div>
+				<div style="margin-top: 4px">
+					<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted-fg); cursor: pointer">
+						<input type="checkbox" style="accent-color: var(--saffron)" /> Save this card for future bookings
+					</label>
+				</div>
+			</div>
+
+			<!-- Cancellation policy -->
+			<div class="book-section" style="padding: 16px 20px">
+				<div style="font-size: 13px; font-weight: 700; margin-bottom: 6px">Cancellation &amp; merit policy</div>
+				<div style="font-size: 13px; color: var(--muted-fg); line-height: 1.6">
+					Cancelling <strong>24+ hours</strong> before: −3 merit points, full refund.<br />
+					Cancelling <strong>within 24 hours</strong>: −10 merit points, 60% refund.<br />
+					No-show: −15 merit points, no refund.
+				</div>
+			</div>
+		</div>
+
+		<!-- Order summary panel -->
+		<div class="book-summary-panel">
+			<div class="bsp-tutor">
+				<div style="width: 44px; height: 44px; border-radius: var(--r-sm); background: #EEF2FF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #3B4FD8; flex-shrink: 0">AP</div>
+				<div><div style="font-size: 13px; font-weight: 700">Aruna Perera</div><div style="font-size: 11px; color: var(--muted-fg)">Physics · 24 Jun, 9:00 AM</div></div>
+			</div>
+			<div class="bsp-row"><span class="bsp-label">Session (1 hour)</span><span>LKR 3,500</span></div>
+			<div class="bsp-row"><span class="bsp-label">Platform fee (10%)</span><span>LKR 350</span></div>
+			<div class="bsp-row"><span class="bsp-label">VAT</span><span>LKR 0</span></div>
+			<div class="bsp-total"><span>Total due</span><span style="color: var(--primary)">LKR 3,850</span></div>
+			<button class="btn btn-saffron btn-full btn-lg" style="margin-top: 16px" onclick={confirmBooking}>
+				<i class="ti ti-lock"></i> Confirm &amp; Pay LKR 3,850
+			</button>
+			<div class="trust-badges">
+				<div class="trust-item"><i class="ti ti-shield-check"></i> 256-bit SSL encryption</div>
+				<div class="trust-item"><i class="ti ti-check"></i> Powered by Stripe</div>
+				<div class="trust-item"><i class="ti ti-refresh"></i> Free cancellation 24h before</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Success overlay -->
+<div class="confirm-overlay" class:show={showConfirm}>
+	<div class="confirm-card">
+		<div style="width: 64px; height: 64px; background: var(--green-lt); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; color: var(--green)"><i class="ti ti-check"></i></div>
+		<h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px">Booking confirmed!</h2>
+		<p style="font-size: 14px; color: var(--muted-fg); margin-bottom: 20px">Your session with <strong>Aruna Perera</strong> on <strong>24 Jun at 9:00 AM</strong> is confirmed. You'll receive an email confirmation shortly.</p>
+		<button class="btn btn-primary btn-full" onclick={goToDashboard}>Go to my dashboard</button>
+	</div>
+</div>
+
+<style>
+	.book-wrap {
+		max-width: 780px;
+		margin: 0 auto;
+		padding: 32px 24px 60px;
+	}
+	.book-title {
+		font-size: 24px;
+		font-weight: 800;
+		margin-bottom: 4px;
+	}
+	.book-sub {
+		font-size: 14px;
+		color: var(--muted-fg);
+		margin-bottom: 28px;
+	}
+	.book-layout {
+		display: grid;
+		grid-template-columns: 1fr 300px;
+		gap: 24px;
+		align-items: start;
+	}
+	.book-main {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+	.book-section {
+		background: #fff;
+		border-radius: var(--r-lg);
+		border: 1px solid var(--border-dk);
+		padding: 22px;
+	}
+	.bs-title {
+		font-size: 15px;
+		font-weight: 700;
+		margin-bottom: 16px;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.bs-title i {
+		font-size: 18px;
+		color: var(--saffron);
+	}
+	.tutor-summary {
+		display: flex;
+		gap: 14px;
+		align-items: center;
+		padding: 14px;
+		background: var(--bg);
+		border-radius: var(--r-sm);
+		margin-bottom: 16px;
+	}
+	.ts-avatar {
+		width: 52px;
+		height: 52px;
+		border-radius: var(--r-sm);
+		background: #EEF2FF;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 18px;
+		font-weight: 800;
+		color: #3B4FD8;
+		flex-shrink: 0;
+	}
+	.sel-slot {
+		background: var(--saffron-lt);
+		border: 1.5px solid rgba(232,147,14,.3);
+		border-radius: var(--r-sm);
+		padding: 12px 16px;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 12px;
+	}
+	.card-input {
+		width: 100%;
+		padding: 12px 14px;
+		border: 1.5px solid var(--border-dk);
+		border-radius: var(--r-sm);
+		font-size: 14px;
+		font-family: var(--ff-mono);
+		color: var(--fg);
+		background: #fff;
+		letter-spacing: 1px;
+		transition: border-color .15s;
+	}
+	.card-input:focus {
+		outline: none;
+		border-color: var(--saffron);
+	}
+	.card-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+	}
+	.book-summary-panel {
+		background: #fff;
+		border-radius: var(--r-lg);
+		border: 1px solid var(--border-dk);
+		padding: 22px;
+		position: sticky;
+		top: 80px;
+	}
+	.bsp-tutor {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+		margin-bottom: 16px;
+		padding-bottom: 14px;
+		border-bottom: 1px solid var(--border);
+	}
+	.bsp-row {
+		display: flex;
+		justify-content: space-between;
+		font-size: 13px;
+		margin-bottom: 8px;
+	}
+	.bsp-label {
+		color: var(--muted-fg);
+	}
+	.bsp-total {
+		display: flex;
+		justify-content: space-between;
+		font-size: 15px;
+		font-weight: 800;
+		border-top: 1px solid var(--border-dk);
+		padding-top: 12px;
+		margin-top: 4px;
+	}
+	.trust-badges {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		margin-top: 14px;
+	}
+	.trust-item {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		font-size: 12px;
+		color: var(--muted-fg);
+	}
+	.trust-item i {
+		color: var(--green);
+		font-size: 14px;
+	}
+	.confirm-overlay {
+		display: none;
+		position: fixed;
+		inset: 0;
+		background: rgba(0,0,0,.4);
+		backdrop-filter: blur(4px);
+		z-index: 200;
+		align-items: center;
+		justify-content: center;
+	}
+	.confirm-overlay.show {
+		display: flex;
+	}
+	.confirm-card {
+		background: #fff;
+		border-radius: var(--r-xl);
+		padding: 40px;
+		max-width: 380px;
+		width: 100%;
+		text-align: center;
+		box-shadow: var(--sh-lg);
+	}
+</style>
