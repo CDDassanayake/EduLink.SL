@@ -2,6 +2,10 @@
 	import { page } from '$app/stores';
 
 	let { children } = $props();
+
+	function isActive(path: string) {
+		return $page.url.pathname === path || $page.url.pathname.startsWith(path + '/');
+	}
 </script>
 
 <div class="app-wrap">
@@ -12,20 +16,20 @@
 			<div class="sb-logo-role">Student Portal</div>
 		</div>
 		<div class="sb-section">Main</div>
-		<a href="/student/dashboard" class="sb-link {$page.url.pathname === '/student/dashboard' ? 'active' : ''}">
+		<a href="/student/dashboard" class="sb-link {isActive('/student/dashboard') ? 'active' : ''}">
 			<i class="ti ti-layout-dashboard"></i>Dashboard
 		</a>
 		<a href="/find-tutors" class="sb-link">
 			<i class="ti ti-search"></i>Find Tutors
 		</a>
-		<a href="/student/bookings" class="sb-link">
+		<a href="/student/bookings" class="sb-link {isActive('/student/bookings') ? 'active' : ''}">
 			<i class="ti ti-calendar-check"></i>My Bookings
 		</a>
-		<a href="/student/messages" class="sb-link">
+		<a href="/student/messages" class="sb-link {isActive('/student/messages') ? 'active' : ''}">
 			<i class="ti ti-message-circle"></i>Messages
 			<span style="background: var(--saffron); color: #fff; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 100px; margin-left: auto">2</span>
 		</a>
-		<a href="/student/ai-chat" class="sb-link">
+		<a href="/student/ai-chat" class="sb-link {isActive('/student/ai-chat') ? 'active' : ''}">
 			<i class="ti ti-sparkles"></i>AI Career Chat
 		</a>
 		<div class="sb-spacer"></div>
