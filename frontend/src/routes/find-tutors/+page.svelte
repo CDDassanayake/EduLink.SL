@@ -52,7 +52,7 @@
 <div class="container" style="padding-top: 16px">
 	<div class="login-gate">
 		<div class="login-gate-txt"><i class="ti ti-lock" style="font-size: 14px; margin-right: 5px"></i>Log in to view full tutor profiles, check availability, and book sessions.</div>
-		<a href="/auth/login?redirect=find-tutors" class="btn btn-saffron btn-sm">Log in to book</a>
+		<a href="/auth/login?redirect=/find-tutors" class="btn btn-saffron btn-sm">Log in to book</a>
 	</div>
 </div>
 
@@ -115,7 +115,7 @@
 			</select>
 		</div>
 		<div class="tutors-list">
-			<a href="/auth/login?redirect=tutor-profile" style="display: block">
+			<a href="/tutor/1" style="display: block">
 				<div class="tutor-list-card">
 					<div class="tlc-photo" style="background: #EEF2FF; color: #3B4FD8">AP</div>
 					<div class="tlc-body">
@@ -142,7 +142,7 @@
 				</div>
 			</a>
 
-			<a href="/auth/login?redirect=tutor-profile" style="display: block">
+			<a href="/tutor/2" style="display: block">
 				<div class="tutor-list-card">
 					<div class="tlc-photo" style="background: #FFF0E0; color: #A06000">DJ</div>
 					<div class="tlc-body">
@@ -169,7 +169,7 @@
 				</div>
 			</a>
 
-			<a href="/auth/login?redirect=tutor-profile" style="display: block">
+			<a href="/tutor/3" style="display: block">
 				<div class="tutor-list-card">
 					<div class="tlc-photo" style="background: #F0FDF4; color: #166534">RS</div>
 					<div class="tlc-body">
@@ -196,7 +196,7 @@
 				</div>
 			</a>
 
-			<a href="/auth/login?redirect=tutor-profile" style="display: block">
+			<a href="/tutor/4" style="display: block">
 				<div class="tutor-list-card">
 					<div class="tlc-photo" style="background: #FDF4FF; color: #7C3AED">NK</div>
 					<div class="tlc-body">

@@ -27,7 +27,7 @@
 		<h1>Find your path with <em>AI guidance</em></h1>
 		<p>Not sure which A/L stream to pick or which university degree to pursue? Our AI Career Guide analyses the Sri Lankan curriculum, university cutoffs, and your interests to give you a personalised roadmap.</p>
 		<div class="hero-btns">
-			<a href="/auth/login?redirect=student-ai-chat" class="btn btn-saffron btn-lg"><i class="ti ti-sparkles"></i> Try AI Career Guide — free</a>
+			<a href="/auth/login?redirect=student/ai-chat" class="btn btn-saffron btn-lg"><i class="ti ti-sparkles"></i> Try AI Career Guide — free</a>
 			<a href="/streams" class="btn btn-outline">Browse A/L streams →</a>
 		</div>
 		<div class="hero-stats">
@@ -97,7 +97,7 @@
 			<div class="path-card" style="background: var(--primary); border-color: var(--primary); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px">
 				<i class="ti ti-sparkles" style="font-size: 24px; color: var(--saffron)"></i>
 				<div style="font-size: 13px; font-weight: 700; color: #fff; text-align: center">Ask AI for your path</div>
-				<a href="/auth/login?redirect=student-ai-chat" class="btn btn-saffron btn-sm">Start chat →</a>
+				<a href="/auth/login?redirect=student/ai-chat" class="btn btn-saffron btn-sm">Start chat →</a>
 			</div>
 		</div>
 	</div>
@@ -110,7 +110,7 @@
 			<div>
 				<div style="font-size: 30px; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 14px">See how it works</div>
 				<div style="font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.65; margin-bottom: 24px">Students ask natural questions in English or Sinhala. The AI gives specific, accurate answers based on the current Sri Lankan curriculum and university entrance requirements.</div>
-				<a href="/auth/login?redirect=student-ai-chat" class="btn btn-saffron btn-lg"><i class="ti ti-sparkles"></i> Try it free — no credit card</a>
+				<a href="/auth/login?redirect=student/ai-chat" class="btn btn-saffron btn-lg"><i class="ti ti-sparkles"></i> Try it free — no credit card</a>
 			</div>
 			<div>
 				<div class="demo-chat">
@@ -148,7 +148,7 @@
 		</div>
 		<div style="display: flex; gap: 12px">
 			<a href="/auth/register?role=student" class="btn btn-primary btn-lg">Create free account →</a>
-			<a href="/auth/login?redirect=student-ai-chat" class="btn btn-outline btn-lg">Log in & start</a>
+			<a href="/auth/login?redirect=student/ai-chat" class="btn btn-outline btn-lg">Log in & start</a>
 		</div>
 	</div>
 </div>
