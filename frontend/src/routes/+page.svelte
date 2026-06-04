@@ -120,7 +120,7 @@
 		</div>
 		<div class="tutors-grid">
 			<!-- Tutor 1 -->
-			<a href="/auth/login?redirect=tutor-profile" class="tutor-card" style="display: block">
+			<a href="/tutor/1" class="tutor-card" style="display: block">
 				<div class="tc-header">
 					<div class="tc-photo" style="background: #EEF2FF; color: #4F6EF7; font-size: 22px; font-weight: 800">AP</div>
 					<div>
@@ -144,7 +144,7 @@
 				</div>
 			</a>
 			<!-- Tutor 2 -->
-			<a href="/auth/login?redirect=tutor-profile" class="tutor-card" style="display: block">
+			<a href="/tutor/2" class="tutor-card" style="display: block">
 				<div class="tc-header">
 					<div class="tc-photo" style="background: #FFF0E0; color: #B06000; font-size: 22px; font-weight: 800">DJ</div>
 					<div>
@@ -168,7 +168,7 @@
 				</div>
 			</a>
 			<!-- Tutor 3 -->
-			<a href="/auth/login?redirect=tutor-profile" class="tutor-card" style="display: block">
+			<a href="/tutor/3" class="tutor-card" style="display: block">
 				<div class="tc-header">
 					<div class="tc-photo" style="background: #F0FDF4; color: #166534; font-size: 22px; font-weight: 800">RS</div>
 					<div>
