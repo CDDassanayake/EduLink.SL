@@ -54,21 +54,21 @@
 		</div>
 		<div style="font-size: 13px; font-weight: 700; color: var(--muted-fg); margin-bottom: 12px; font-family: var(--ff-mono); text-transform: uppercase; letter-spacing: 0.5px">Top rated tutors for this stream</div>
 		<div class="tutors-mini">
-			<a href="/auth/login?redirect=tutor-profile" class="tutor-mini-card">
+			<a href="/tutor/1" class="tutor-mini-card">
 				<div class="tmc-photo" style="background: #EEF2FF; color: #3B4FD8">AP</div>
 				<div class="tmc-name">Aruna Perera</div>
 				<div class="tmc-spec">Physics</div>
 				<div style="color: var(--saffron); font-size: 12px; margin-bottom: 4px">★★★★★ 4.9</div>
 				<span class="badge-merit tmc-merit">MERIT 98</span>
 			</a>
-			<a href="/auth/login?redirect=tutor-profile" class="tutor-mini-card">
+			<a href="/tutor/2" class="tutor-mini-card">
 				<div class="tmc-photo" style="background: #FFF0E0; color: #A06000">DJ</div>
 				<div class="tmc-name">Dilini Jayasuriya</div>
 				<div class="tmc-spec">Combined Maths</div>
 				<div style="color: var(--saffron); font-size: 12px; margin-bottom: 4px">★★★★★ 5.0</div>
 				<span class="badge-merit tmc-merit">MERIT 94</span>
 			</a>
-			<a href="/auth/login?redirect=tutor-profile" class="tutor-mini-card">
+			<a href="/tutor/3" class="tutor-mini-card">
 				<div class="tmc-photo" style="background: #F0FDF4; color: #166534">RS</div>
 				<div class="tmc-name">Dr. Rohan Silva</div>
 				<div class="tmc-spec">Chemistry</div>
@@ -103,14 +103,14 @@
 		</div>
 		<div style="font-size: 13px; font-weight: 700; color: var(--muted-fg); margin-bottom: 12px; font-family: var(--ff-mono); text-transform: uppercase; letter-spacing: 0.5px">Top rated tutors for this stream</div>
 		<div class="tutors-mini">
-			<a href="/auth/login?redirect=tutor-profile" class="tutor-mini-card">
+			<a href="/tutor/4" class="tutor-mini-card">
 				<div class="tmc-photo" style="background: #FDF4FF; color: #7C3AED">NK</div>
 				<div class="tmc-name">Nadeesha Kumari</div>
 				<div class="tmc-spec">Biology</div>
 				<div style="color: var(--saffron); font-size: 12px; margin-bottom: 4px">★★★★★ 4.7</div>
 				<span class="badge-merit tmc-merit">MERIT 91</span>
 			</a>
-			<a href="/auth/login?redirect=tutor-profile" class="tutor-mini-card">
+			<a href="/tutor/3" class="tutor-mini-card">
 				<div class="tmc-photo" style="background: #F0FDF4; color: #166534">RS</div>
 				<div class="tmc-name">Dr. Rohan Silva</div>
 				<div class="tmc-spec">Chemistry</div>
