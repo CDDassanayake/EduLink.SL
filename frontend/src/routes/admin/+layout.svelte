@@ -2,6 +2,10 @@
 	import { page } from '$app/stores';
 
 	let { children } = $props();
+
+	function isActive(path: string) {
+		return $page.url.pathname === path || $page.url.pathname.startsWith(path + '/');
+	}
 </script>
 
 <div class="app-wrap">
@@ -11,10 +15,10 @@
 			<div class="sb-logo-role" style="color: #E8930E">Admin Console</div>
 		</div>
 		<div class="sb-section">Platform</div>
-		<a href="/admin/dashboard" class="sb-link {$page.url.pathname === '/admin/dashboard' ? 'active' : ''}">
+		<a href="/admin/dashboard" class="sb-link {isActive('/admin/dashboard') ? 'active' : ''}">
 			<i class="ti ti-chart-bar"></i>Analytics
 		</a>
-		<a href="/admin/verifications" class="sb-link">
+		<a href="/admin/verifications" class="sb-link {isActive('/admin/verifications') ? 'active' : ''}">
 			<i class="ti ti-shield-check"></i>Verifications
 			<span style="background: var(--saffron); color: #fff; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 100px; margin-left: auto">4</span>
 		</a>
