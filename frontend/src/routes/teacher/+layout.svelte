@@ -2,6 +2,10 @@
 	import { page } from '$app/stores';
 
 	let { children } = $props();
+
+	function isActive(path: string) {
+		return $page.url.pathname === path || $page.url.pathname.startsWith(path + '/');
+	}
 </script>
 
 <div class="app-wrap">
@@ -11,25 +15,25 @@
 			<div class="sb-logo-role">Teacher Portal</div>
 		</div>
 		<div class="sb-section">Manage</div>
-		<a href="/teacher/dashboard" class="sb-link {$page.url.pathname === '/teacher/dashboard' ? 'active' : ''}">
+		<a href="/teacher/dashboard" class="sb-link {isActive('/teacher/dashboard') ? 'active' : ''}">
 			<i class="ti ti-layout-dashboard"></i>Dashboard
 		</a>
-		<a href="/teacher/post-class" class="sb-link">
+		<a href="/teacher/post-class" class="sb-link {isActive('/teacher/post-class') ? 'active' : ''}">
 			<i class="ti ti-plus"></i>Post a Class
 		</a>
-		<a href="/teacher/schedule" class="sb-link">
+		<a href="/teacher/schedule" class="sb-link {isActive('/teacher/schedule') ? 'active' : ''}">
 			<i class="ti ti-calendar"></i>Schedule
 		</a>
-		<a href="/teacher/messages" class="sb-link">
+		<a href="/teacher/messages" class="sb-link {isActive('/teacher/messages') ? 'active' : ''}">
 			<i class="ti ti-message-circle"></i>Messages
 			<span style="background: var(--saffron); color: #fff; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 100px; margin-left: auto">3</span>
 		</a>
-		<a href="/teacher/earnings" class="sb-link">
+		<a href="/teacher/earnings" class="sb-link {isActive('/teacher/earnings') ? 'active' : ''}">
 			<i class="ti ti-wallet"></i>Earnings
 		</a>
 		<div class="sb-spacer"></div>
 		<div class="sb-section">Account</div>
-		<a href="/teacher/verification" class="sb-link">
+		<a href="/teacher/verification" class="sb-link {isActive('/teacher/verification') ? 'active' : ''}">
 			<i class="ti ti-shield-check"></i>Verification
 			<span class="badge badge-green" style="font-size: 9px; margin-left: auto">Verified</span>
 		</a>
