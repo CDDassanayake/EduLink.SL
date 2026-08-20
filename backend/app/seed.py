@@ -4,6 +4,7 @@ Run this after running migrations: python -m app.seed
 """
 import asyncio
 import uuid
+from sqlalchemy import text, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import AsyncSessionLocal, engine
 from app.models.listing import Subject, SubjectCategory
@@ -68,7 +69,7 @@ async def seed_subjects():
 
     async with AsyncSessionLocal() as session:
         # Check if subjects already exist
-        result = await session.execute("SELECT COUNT(*) FROM subjects")
+        result = await session.execute(select(func.count()).select_from(Subject))
         count = result.scalar()
         
         if count > 0:
