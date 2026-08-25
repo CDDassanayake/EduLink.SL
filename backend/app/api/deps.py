@@ -2,72 +2,61 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.user import User, UserRole
+from app.api.routes.auth import fastapi_users
 
 
 async def get_current_user(
-    db: AsyncSession = Depends(get_db)
+    user: User = Depends(fastapi_users.current_user()),
 ) -> User:
     """
-    Get current authenticated user from JWT token.
-    This will be implemented with FastAPI-Users.
+    Get the current authenticated user from JWT token.
     """
-    # TODO: Implement with FastAPI-Users
-    # For now, return a placeholder
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Auth not yet implemented with FastAPI-Users"
-    )
+    return user
 
 
 async def get_current_active_user(
-    current_user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ) -> User:
-    """Get current active user"""
-    if not current_user.is_active:
+    """
+    Get the current active user.
+    """
+    if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Inactive user"
+            detail="User account is inactive"
         )
-    return current_user
+    return user
 
 
-async def require_student(
-    current_user: User = Depends(get_current_active_user)
-) -> User:
-    """Require student role"""
-    if current_user.role != UserRole.STUDENT:
+async def require_student(user: User = Depends(get_current_active_user)) -> User:
+    """
+    Require the current user to have STUDENT role.
+    """
+    if user.role != "STUDENT":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Student access required"
         )
-    return current_user
+    return user
 
 
-async def require_teacher(
-    current_user: User = Depends(get_current_active_user)
-) -> User:
-    """Require teacher role"""
-    if current_user.role != UserRole.TEACHER:
+async def require_teacher(user: User = Depends(get_current_active_user)) -> User:
+    """
+    Require the current user to have TEACHER role.
+    """
+    if user.role != "TEACHER":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Teacher access required"
         )
-    # TODO: Check verification status when teacher profile is implemented
-    # if current_user.teacher_profile.verification_status != 'APPROVED':
-    #     raise HTTPException(
-    #         status_code=status.HTTP_403_FORBIDDEN,
-    #         detail="Account not yet verified"
-    #     )
-    return current_user
+    return user
 
 
-async def require_admin(
-    current_user: User = Depends(get_current_active_user)
-) -> User:
+async def require_admin(user: User = Depends(get_current_active_user)) -> User:
     """Require admin role"""
-    if current_user.role != UserRole.ADMIN:
+    if user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required"
         )
-    return current_user
+    return user

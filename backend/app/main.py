@@ -23,7 +23,7 @@ app.add_middleware(
 # Include routers (will be uncommented as routes are implemented)
 from app.api.routes import auth, tutors, bookings, payments, reviews, messages, ai_chat, admin
 
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(auth.router, prefix="/api/v1")
 app.include_router(tutors.router, prefix="/api/v1/tutors", tags=["tutors"])
 app.include_router(bookings.router, prefix="/api/v1/bookings", tags=["bookings"])
 app.include_router(payments.router, prefix="/api/v1/payments", tags=["payments"])
