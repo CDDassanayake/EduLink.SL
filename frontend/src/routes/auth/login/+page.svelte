@@ -1,23 +1,63 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { getAuthStore } from '$lib/stores/auth.svelte.ts';
 
-	let selectedRole = $state('student');
+	let email = $state('');
+	let password = $state('');
+	let isLoading = $state(false);
+	let error = $state('');
 
-	function selectRole(role: string) {
-		selectedRole = role;
+	// Validation errors
+	let emailError = $state('');
+	let passwordError = $state('');
+
+	const authStore = getAuthStore();
+
+	// Validation functions
+	function validateEmail(email: string): boolean {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return emailRegex.test(email);
 	}
 
-	function handleLogin() {
-		const params = new URLSearchParams(window.location.search);
-		const redirect = params.get('redirect');
-		if (redirect) {
-			goto(`/${redirect}`);
-			return;
+	async function handleLogin() {
+		try {
+			isLoading = true;
+			error = '';
+			emailError = '';
+			passwordError = '';
+
+			// Validation
+			if (!email || !password) {
+				error = 'Please enter both email and password.';
+				return;
+			}
+
+			// Email validation
+			if (!validateEmail(email)) {
+				emailError = 'Please enter a valid email address.';
+				return;
+			}
+			
+			await authStore.login(email, password);
+			
+			const params = new URLSearchParams(window.location.search);
+			const redirect = params.get('redirect');
+			
+			if (redirect) {
+				goto(`/${redirect}`);
+				return;
+			}
+			
+			// Redirect to appropriate dashboard based on user role
+			if (authStore.user?.role === 'STUDENT') goto('/student/dashboard');
+			else if (authStore.user?.role === 'TEACHER') goto('/teacher/dashboard');
+			else if (authStore.user?.role === 'ADMIN') goto('/admin/dashboard');
+			else goto('/');
+		} catch (err) {
+			error = err.message || 'Login failed. Please check your credentials.';
+		} finally {
+			isLoading = false;
 		}
-		// Redirect to appropriate dashboard based on selected role
-		if (selectedRole === 'student') goto('/student/dashboard');
-		else if (selectedRole === 'teacher') goto('/teacher/dashboard');
-		else goto('/admin/dashboard');
 	}
 </script>
 
@@ -52,50 +92,48 @@
 
 		<div class="divider-text">or sign in with email</div>
 
-		<!-- Demo: role selector -->
-		<div class="role-demo">
-			<div class="role-demo-lbl">Demo: Log in as</div>
-			<div class="role-grid">
-				<button
-					type="button"
-					class="role-opt {selectedRole === 'student' ? 'sel' : ''}"
-					onclick={() => selectRole('student')}
-				>
-					<i class="ti ti-school"></i>Student
-				</button>
-				<button
-					type="button"
-					class="role-opt {selectedRole === 'teacher' ? 'sel' : ''}"
-					onclick={() => selectRole('teacher')}
-				>
-					<i class="ti ti-certificate"></i>Teacher
-				</button>
-				<button
-					type="button"
-					class="role-opt {selectedRole === 'admin' ? 'sel' : ''}"
-					onclick={() => selectRole('admin')}
-				>
-					<i class="ti ti-shield"></i>Admin
-				</button>
-			</div>
-		</div>
+		{#if error}
+			<div class="error-message">{error}</div>
+		{/if}
 
 		<div class="form-group">
 			<label class="form-label" for="email">Email address</label>
-			<input class="form-input" id="email" type="email" placeholder="kasun@email.com" value="kasun@example.com" />
+			<input 
+				class="form-input {emailError ? 'input-error' : ''}" 
+				id="email" 
+				type="email" 
+				placeholder="kasun@email.com" 
+				bind:value={email} 
+				disabled={isLoading}
+			/>
+			{#if emailError}
+				<div class="field-error">{emailError}</div>
+			{/if}
 		</div>
 		<div class="form-group" style="margin-bottom: 6px">
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px">
 				<label class="form-label" for="password" style="margin-bottom: 0">Password</label>
 				<a href="/auth/forgot-password" style="font-size: 12px; color: var(--color-saffron); font-weight: 600">Forgot password?</a>
 			</div>
-			<input class="form-input" id="password" type="password" value="••••••••••" />
+			<input 
+				class="form-input {passwordError ? 'input-error' : ''}" 
+				id="password" 
+				type="password" 
+				placeholder="••••••••••" 
+				bind:value={password}
+				disabled={isLoading}
+			/>
+			{#if passwordError}
+				<div class="field-error">{passwordError}</div>
+			{/if}
 		</div>
 		<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px">
 			<input type="checkbox" id="remember" checked style="accent-color: var(--color-saffron); cursor: pointer" />
 			<label for="remember" style="font-size: 13px; color: var(--color-muted-fg)">Remember me for 30 days</label>
 		</div>
-		<button class="btn btn-primary btn-full" onclick={handleLogin}>Sign In →</button>
+		<button class="btn btn-primary btn-full" onclick={handleLogin} disabled={isLoading}>
+			{isLoading ? 'Signing in...' : 'Sign In →'}
+		</button>
 		<div class="auth-footer">Don't have an account? <a href="/auth/register">Sign up free</a></div>
 	</div>
 </div>
@@ -207,6 +245,24 @@
 		display: block;
 		font-size: 18px;
 		margin-bottom: 3px;
+	}
+	.error-message {
+		background: #fee2e2;
+		border: 1px solid #fecaca;
+		color: #dc2626;
+		padding: 10px 14px;
+		border-radius: var(--radius-sm);
+		font-size: 13px;
+		margin-bottom: 16px;
+	}
+	.field-error {
+		color: #dc2626;
+		font-size: 12px;
+		margin-top: 4px;
+	}
+	.input-error {
+		border-color: #dc2626 !important;
+		background: #fef2f2;
 	}
 	.auth-footer {
 		text-align: center;

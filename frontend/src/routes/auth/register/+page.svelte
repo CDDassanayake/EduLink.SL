@@ -1,14 +1,35 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { getAuthStore } from '$lib/stores/auth.svelte.ts';
+	import { register } from '$lib/api/auth';
 
 	let currentStep = $state(1);
 	let selectedRole = $state('student');
+	let isLoading = $state(false);
+	let error = $state('');
+
+	// Form fields
+	let firstName = $state('');
+	let lastName = $state('');
+	let email = $state('');
+	let phone = $state('');
+	let district = $state('');
+	let password = $state('');
+	let confirmPassword = $state('');
+
+	// Validation errors
+	let emailError = $state('');
+	let phoneError = $state('');
+	let passwordError = $state('');
+	let confirmPasswordError = $state('');
 
 	// Pre-select role from URL if provided
 	if ($page.url.searchParams.get('role') === 'teacher') {
 		selectedRole = 'teacher';
 	}
+
+	const authStore = getAuthStore();
 
 	function pickRole(role: string) {
 		selectedRole = role;
@@ -16,10 +37,118 @@
 
 	function goStep(n: number) {
 		currentStep = n;
+		error = '';
+		// Clear validation errors when moving between steps
+		if (n !== 2) {
+			emailError = '';
+			phoneError = '';
+			passwordError = '';
+			confirmPasswordError = '';
+		}
+	}
+
+	// Validation functions
+	function validateEmail(email: string): boolean {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return emailRegex.test(email);
+	}
+
+	function validatePhone(phone: string): boolean {
+		// Sri Lankan phone number validation (starts with 0 or +94, 9-10 digits)
+		const phoneRegex = /^(0\d{9}|\+94\d{9})$/;
+		return phoneRegex.test(phone.replace(/\s/g, ''));
+	}
+
+	function validatePassword(password: string): { valid: boolean; message: string } {
+		if (password.length < 8) {
+			return { valid: false, message: 'Password must be at least 8 characters long.' };
+		}
+		return { valid: true, message: '' };
+	}
+
+	async function handleRegistration() {
+		try {
+			isLoading = true;
+			error = '';
+			emailError = '';
+			phoneError = '';
+			passwordError = '';
+			confirmPasswordError = '';
+
+			// Validation
+			if (!firstName || !lastName || !email || !password) {
+				error = 'Please fill in all required fields.';
+				return;
+			}
+
+			// Email validation
+			if (!validateEmail(email)) {
+				emailError = 'Please enter a valid email address (e.g., user@example.com).';
+				return;
+			}
+
+			// Phone validation (if provided)
+			if (phone && !validatePhone(phone)) {
+				phoneError = 'Please enter a valid Sri Lankan phone number (e.g., 0771234567 or +94771234567).';
+				return;
+			}
+
+			// Password validation
+			const passwordValidation = validatePassword(password);
+			if (!passwordValidation.valid) {
+				passwordError = passwordValidation.message;
+				return;
+			}
+
+			// Confirm password validation
+			if (password !== confirmPassword) {
+				confirmPasswordError = 'Passwords do not match.';
+				return;
+			}
+
+			// Map role to backend format
+			const roleMap = {
+				'student': 'STUDENT',
+				'teacher': 'TEACHER'
+			};
+
+			const userData = {
+				email,
+				password,
+				full_name: `${firstName} ${lastName}`,
+				role: roleMap[selectedRole] as 'STUDENT' | 'TEACHER',
+				city: district || undefined,
+				phone: phone || undefined
+			};
+
+			await register(userData);
+
+			// Auto-login after registration
+			await authStore.login(email, password);
+
+			// Redirect to appropriate dashboard
+			if (selectedRole === 'teacher') goto('/teacher/verification');
+			else goto('/student/dashboard');
+
+		} catch (err: any) {
+			// Convert technical errors to user-friendly messages
+			if (err?.response?.status === 400 && err?.response?.data?.detail === 'REGISTER_USER_ALREADY_EXISTS') {
+				error = 'An account with this email already exists. Please sign in instead.';
+			} else if (err?.response?.status === 400) {
+				error = 'Please check your information and try again.';
+			} else if (err?.message && !err?.response) {
+				error = err.message;
+			} else {
+				error = 'Registration failed. Please try again later.';
+			}
+		} finally {
+			isLoading = false;
+		}
 	}
 
 	function finishRegistration() {
-		// Redirect to appropriate dashboard based on selected role
+		// This is now handled by handleRegistration
+		// Keep this for the final step redirect
 		if (selectedRole === 'teacher') goto('/teacher/verification');
 		else goto('/student/dashboard');
 	}
@@ -88,27 +217,69 @@
 			<p class="auth-sub">
 				{selectedRole === 'teacher' ? 'Set up your tutor account' : 'Set up your student account'}
 			</p>
+
+			{#if error}
+				<div class="error-message">{error}</div>
+			{/if}
+
 			<div class="form-grid-2">
 				<div class="form-group">
 					<label class="form-label" for="firstName">First name</label>
-					<input class="form-input" id="firstName" placeholder="Kasun" />
+					<input 
+						class="form-input" 
+						id="firstName" 
+						placeholder="Kasun" 
+						bind:value={firstName}
+						disabled={isLoading}
+					/>
 				</div>
 				<div class="form-group">
 					<label class="form-label" for="lastName">Last name</label>
-					<input class="form-input" id="lastName" placeholder="Jayasuriya" />
+					<input 
+						class="form-input" 
+						id="lastName" 
+						placeholder="Jayasuriya" 
+						bind:value={lastName}
+						disabled={isLoading}
+					/>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="form-label" for="email">Email address</label>
-				<input class="form-input" id="email" type="email" placeholder="you@email.com" />
+				<input 
+					class="form-input {emailError ? 'input-error' : ''}" 
+					id="email" 
+					type="email" 
+					placeholder="you@email.com" 
+					bind:value={email}
+					disabled={isLoading}
+				/>
+				{#if emailError}
+					<div class="field-error">{emailError}</div>
+				{/if}
 			</div>
 			<div class="form-group">
-				<label class="form-label" for="phone">Phone number</label>
-				<input class="form-input" id="phone" type="tel" placeholder="+94 77 123 4567" />
+				<label class="form-label" for="phone">Phone number (optional)</label>
+				<input 
+					class="form-input {phoneError ? 'input-error' : ''}" 
+					id="phone" 
+					type="tel" 
+					placeholder="+94 77 123 4567" 
+					bind:value={phone}
+					disabled={isLoading}
+				/>
+				{#if phoneError}
+					<div class="field-error">{phoneError}</div>
+				{/if}
 			</div>
 			<div class="form-group">
 				<label class="form-label" for="district">District</label>
-				<select class="form-input" id="district">
+				<select 
+					class="form-input" 
+					id="district" 
+					bind:value={district}
+					disabled={isLoading}
+				>
 					<option value="">Select your district</option>
 					<option>Colombo</option>
 					<option>Kandy</option>
@@ -120,39 +291,54 @@
 					<option>Anuradhapura</option>
 					<option>Badulla</option>
 					<option>Ratnapura</option>
+					<option>Ampara</option>
+					<option>Batticaloa</option>
+					<option>Jaffna</option>
+					<option>Kilinochchi</option>
+					<option>Mannar</option>
+					<option>Mullaitivu</option>
+					<option>Polonnaruwa</option>
+					<option>Puttalam</option>
+					<option>Trincomalee</option>
+					<option>Vavuniya</option>
 				</select>
 			</div>
 			<div class="form-group">
 				<label class="form-label" for="password">Password</label>
-				<input class="form-input" id="password" type="password" placeholder="Minimum 8 characters" />
+				<input 
+					class="form-input {passwordError ? 'input-error' : ''}" 
+					id="password" 
+					type="password" 
+					placeholder="Minimum 8 characters" 
+					bind:value={password}
+					disabled={isLoading}
+				/>
+				{#if passwordError}
+					<div class="field-error">{passwordError}</div>
+				{/if}
 			</div>
 			<div class="form-group" style="margin-bottom: 20px">
 				<label class="form-label" for="confirmPassword">Confirm password</label>
-				<input class="form-input" id="confirmPassword" type="password" placeholder="Repeat password" />
+				<input 
+					class="form-input {confirmPasswordError ? 'input-error' : ''}" 
+					id="confirmPassword" 
+					type="password" 
+					placeholder="Repeat password" 
+					bind:value={confirmPassword}
+					disabled={isLoading}
+				/>
+				{#if confirmPasswordError}
+					<div class="field-error">{confirmPasswordError}</div>
+				{/if}
 			</div>
 			<div style="display: flex; gap: 10px">
-				<button class="btn btn-ghost" onclick={() => goStep(1)}>← Back</button>
-				<button class="btn btn-primary" style="flex: 1" onclick={() => goStep(3)}>Continue →</button>
+				<button class="btn btn-ghost" onclick={() => goStep(1)} disabled={isLoading}>← Back</button>
+				<button class="btn btn-primary" style="flex: 1" onclick={handleRegistration} disabled={isLoading}>
+					{isLoading ? 'Creating account...' : 'Create Account →'}
+				</button>
 			</div>
 		{/if}
 
-		<!-- Step 3: Confirm / Redirect -->
-		{#if currentStep === 3}
-			<div style="text-align: center; padding: 16px 0 24px">
-				<div
-					style="width: 64px; height: 64px; background: var(--color-green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; color: var(--color-green)"
-				>
-					<i class="ti ti-check"></i>
-				</div>
-				<h1 class="auth-title">Account created!</h1>
-				<p class="auth-sub">
-					{selectedRole === 'teacher'
-						? 'Next step: upload your verification documents to start listing classes.'
-						: "You're all set. Continue to your student dashboard."}
-				</p>
-			</div>
-			<button class="btn btn-primary btn-full" onclick={finishRegistration}>Go to my dashboard →</button>
-		{/if}
 
 		{#if currentStep < 3}
 			<div class="auth-footer">Already have an account? <a href="/auth/login">Sign in</a></div>
@@ -286,6 +472,24 @@
 		font-size: 12px;
 		color: var(--color-muted-fg);
 		line-height: 1.5;
+	}
+	.error-message {
+		background: #fee2e2;
+		border: 1px solid #fecaca;
+		color: #dc2626;
+		padding: 10px 14px;
+		border-radius: var(--radius-sm);
+		font-size: 13px;
+		margin-bottom: 16px;
+	}
+	.field-error {
+		color: #dc2626;
+		font-size: 12px;
+		margin-top: 4px;
+	}
+	.input-error {
+		border-color: #dc2626 !important;
+		background: #fef2f2;
 	}
 	.auth-footer {
 		text-align: center;
