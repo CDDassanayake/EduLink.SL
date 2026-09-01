@@ -8,8 +8,23 @@ let accessToken = $state<string | null>(null);
 // Initialize from localStorage
 if (typeof window !== 'undefined') {
 	const storedToken = localStorage.getItem('access_token');
+	const storedUser = localStorage.getItem('user');
+	
 	if (storedToken) {
 		accessToken = storedToken;
+	}
+	
+	if (storedUser) {
+		try {
+			user = JSON.parse(storedUser);
+		} catch (e) {
+			console.error('Failed to parse stored user:', e);
+		}
+	}
+	
+	// If we have a token but no user, try to fetch user data
+	if (storedToken && !user) {
+		isLoading = true;
 	}
 }
 
@@ -26,6 +41,13 @@ export function getAuthStore() {
 		},
 		setUser(newUser: User | null) {
 			user = newUser;
+			if (typeof window !== 'undefined') {
+				if (newUser) {
+					localStorage.setItem('user', JSON.stringify(newUser));
+				} else {
+					localStorage.removeItem('user');
+				}
+			}
 		},
 		setAccessToken(token: string | null) {
 			accessToken = token;
@@ -43,6 +65,13 @@ export function getAuthStore() {
 		async login(email: string, password: string) {
 			try {
 				store.setLoading(true);
+				
+				// Clear any existing auth data before login
+				if (typeof window !== 'undefined') {
+					localStorage.removeItem('access_token');
+					localStorage.removeItem('user');
+				}
+				
 				const response = await apiLogin(email, password);
 				store.setAccessToken(response.access_token);
 				
@@ -71,9 +100,16 @@ export function getAuthStore() {
 			} catch (error) {
 				console.error('Logout error:', error);
 			} finally {
+				// Clear all auth state
 				store.setAccessToken(null);
-				user = null;
+				store.setUser(null);
 				isLoading = false;
+				
+				// Clear localStorage completely
+				if (typeof window !== 'undefined') {
+					localStorage.removeItem('access_token');
+					localStorage.removeItem('user');
+				}
 			}
 		},
 		async checkAuth() {
@@ -81,10 +117,21 @@ export function getAuthStore() {
 				if (accessToken) {
 					const userData = await getCurrentUser();
 					store.setUser(userData);
+				} else {
+					// No token, clear user data
+					store.setUser(null);
 				}
 			} catch (error) {
 				// Token might be expired, clear auth state
-				store.logout();
+				console.error('Auth check failed:', error);
+				store.setAccessToken(null);
+				store.setUser(null);
+				
+				// Clear localStorage on auth failure
+				if (typeof window !== 'undefined') {
+					localStorage.removeItem('access_token');
+					localStorage.removeItem('user');
+				}
 			} finally {
 				store.setLoading(false);
 			}
