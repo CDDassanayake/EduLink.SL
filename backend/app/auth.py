@@ -53,7 +53,7 @@ async def get_user_manager(user_db=Depends(get_user_db)) -> AsyncGenerator[UserM
 def get_jwt_strategy() -> JWTStrategy:
     """Get JWT authentication strategy"""
     from app.config import settings
-    return JWTStrategy(secret=settings.SECRET_KEY, lifetime_seconds=1800)  # 30 minutes
+    return JWTStrategy(secret=settings.SECRET_KEY, lifetime_seconds=604800)  # 7 days
 
 
 bearer_transport = BearerTransport(tokenUrl="api/v1/auth/jwt/login")
