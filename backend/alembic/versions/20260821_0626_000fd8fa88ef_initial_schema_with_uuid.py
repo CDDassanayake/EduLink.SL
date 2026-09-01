@@ -1,8 +1,8 @@
-"""Initial schema
+"""Initial schema with UUID
 
-Revision ID: c8e49a88dce0
+Revision ID: 000fd8fa88ef
 Revises: 
-Create Date: 2026-08-20 08:36:58.808506
+Create Date: 2026-08-21 06:26:21.578067
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c8e49a88dce0'
+revision: str = '000fd8fa88ef'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -166,8 +166,8 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_teacher_listings_teacher_id'), 'teacher_listings', ['teacher_id'], unique=False)
     op.create_table('teacher_profiles',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('user_id', sa.String(length=36), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('bio', sa.Text(), nullable=True),
     sa.Column('years_experience', sa.Integer(), nullable=True),
     sa.Column('document_urls', sa.Text(), nullable=True),
@@ -175,12 +175,12 @@ def upgrade() -> None:
     sa.Column('verification_note', sa.Text(), nullable=True),
     sa.Column('stripe_connect_account_id', sa.String(length=100), nullable=True),
     sa.Column('listing_active', sa.Boolean(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_teacher_profiles_user_id'), 'teacher_profiles', ['user_id'], unique=True)
     op.create_table('users',
-    sa.Column('id', sa.String(length=36), nullable=False),
+    sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('hashed_password', sa.String(length=255), nullable=False),
     sa.Column('full_name', sa.String(length=255), nullable=False),
@@ -192,8 +192,8 @@ def upgrade() -> None:
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('is_verified', sa.Boolean(), nullable=False),
     sa.Column('is_superuser', sa.Boolean(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)

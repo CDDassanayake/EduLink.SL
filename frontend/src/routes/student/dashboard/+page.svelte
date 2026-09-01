@@ -1,32 +1,66 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { getAuthStore } from '$lib/stores/auth.svelte';
+
+	let authStore = getAuthStore();
+	let { data } = $props();
+
+	// Get greeting based on time of day
+	function getGreeting() {
+		const hour = new Date().getHours();
+		if (hour < 12) return 'Good morning';
+		if (hour < 17) return 'Good afternoon';
+		return 'Good evening';
+	}
+
+	// Get formatted date
+	function getCurrentDate() {
+		return new Date().toLocaleDateString('en-GB', {
+			weekday: 'long',
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric'
+		});
+	}
+
+	let user = $derived(data.user);
+	let isLoading = $derived(data.isLoading);
 </script>
 
 <svelte:head>
 	<title>Student Dashboard — EduLink SL</title>
 </svelte:head>
 
-<!-- Top bar -->
-<div class="app-topbar">
-	<div class="app-topbar-title">Dashboard</div>
-	<div class="app-topbar-right">
-		<div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
-		<a href="/find-tutors" class="btn btn-saffron btn-sm"><i class="ti ti-plus"></i>Book a tutor</a>
+{#if isLoading}
+	<div class="loading-container">
+		<div class="loading-spinner"></div>
+		<div class="loading-text">Loading your dashboard...</div>
 	</div>
-</div>
+{:else if user}
+	<!-- Top bar -->
+	<div class="app-topbar">
+		<div class="app-topbar-title">Dashboard</div>
+		<div class="app-topbar-right">
+			<div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
+			<a href="/find-tutors" class="btn btn-saffron btn-sm"><i class="ti ti-plus"></i>Book a tutor</a>
+		</div>
+	</div>
 
-<!-- Welcome -->
-<div class="welcome-bar">
-	<div>
-		<div class="wb-greeting">Good morning, Kasun 👋</div>
-		<div class="wb-sub">Tuesday, 24 June 2025 · A/L Science Stream · Colombo</div>
+	<!-- Welcome -->
+	<div class="welcome-bar">
+		<div>
+			<div class="wb-greeting">{getGreeting()}, {user.full_name.split(' ')[0]} 👋</div>
+			<div class="wb-sub">{getCurrentDate()} · {user.role} · {user.city || 'Location not set'}</div>
+		</div>
+		<div style="text-align: right">
+			<div style="font-size: 22px; font-weight: 800; color: var(--saffron)">{user.merit_score}<span style="font-size: 13px; opacity: .7">/100</span></div>
+			<div style="font-size: 10px; font-family: var(--ff-mono); text-transform: uppercase; letter-spacing: .5px; opacity: .7">Merit Score</div>
+		</div>
 	</div>
-	<div style="text-align: right">
-		<div style="font-size: 22px; font-weight: 800; color: var(--saffron)">95<span style="font-size: 13px; opacity: .7">/100</span></div>
-		<div style="font-size: 10px; font-family: var(--ff-mono); text-transform: uppercase; letter-spacing: .5px; opacity: .7">Merit Score</div>
-	</div>
-</div>
+{/if}
 
+{#if user}
 <div class="app-content">
 	<!-- Stats -->
 	<div class="stats-row stats-4" style="margin-bottom: 20px">
@@ -141,14 +175,39 @@
 						<div style="font-size: 10px; color: rgba(255,255,255,.5)">Powered by OpenAI</div>
 					</div>
 				</div>
-				<div style="font-size: 13px; color: rgba(255,255,255,.75); line-height: 1.55; margin-bottom: 12px">Hi Kasun! Based on your A/L Science stream, you're on track for Engineering or IT. Want subject tips?</div>
+				<div style="font-size: 13px; color: rgba(255,255,255,.75); line-height: 1.55; margin-bottom: 12px">Hi {user.full_name.split(' ')[0]}! Ready to explore career paths and get study tips?</div>
 				<a href="/student/ai-chat" class="btn btn-outline-white btn-full btn-sm"><i class="ti ti-sparkles"></i> Open AI Career Chat</a>
 			</div>
 		</div>
 	</div>
 </div>
+{/if}
 
 <style>
+	.loading-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 60vh;
+		gap: 16px;
+	}
+	.loading-spinner {
+		width: 40px;
+		height: 40px;
+		border: 3px solid var(--border);
+		border-top-color: var(--saffron);
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
+	}
+	@keyframes spin {
+		to { transform: rotate(360deg); }
+	}
+	.loading-text {
+		font-size: 14px;
+		color: var(--muted-fg);
+	}
+
 	.app-topbar {
 		background: #fff;
 		border-bottom: 1px solid var(--border-dk);

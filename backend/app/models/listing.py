@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy import String, Numeric, Boolean, Text, Integer, Enum as SQLEnum
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
@@ -41,7 +42,7 @@ class Subject(Base):
     __tablename__ = "subjects"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        String(36), primary_key=True, default=uuid.uuid4
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     category: Mapped[SubjectCategory] = mapped_column(
@@ -58,12 +59,12 @@ class TeacherListing(Base):
     __tablename__ = "teacher_listings"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        String(36), primary_key=True, default=uuid.uuid4
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    teacher_id: Mapped[str] = mapped_column(
-        String(36), nullable=False, index=True
+    teacher_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
     )
-    subject_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    subject_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
     mode: Mapped[TeachingMode] = mapped_column(
         SQLEnum(TeachingMode), nullable=False
     )

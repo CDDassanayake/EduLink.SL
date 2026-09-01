@@ -1,6 +1,47 @@
 <script lang="ts">
+	import { searchTutors, type Tutor, type TutorSearchParams } from '$lib/api/tutors';
+	import { getAuthStore } from '$lib/stores/auth.svelte';
+
 	let searchSubject = $state('');
 	let selectedDistrict = $state('All Districts');
+	let selectedStream = $state('');
+	let selectedMode = $state('');
+	let minRating = $state(4.5);
+	let maxPrice = $state(5000);
+	let availableToday = $state(false);
+	let verifiedOnly = $state(true);
+	
+	let tutors = $state<Tutor[]>([]);
+	let isLoading = $state(false);
+	let error = $state('');
+
+	const authStore = getAuthStore();
+
+	async function performSearch() {
+		try {
+			isLoading = true;
+			error = '';
+			
+			const params: TutorSearchParams = {
+				city: selectedDistrict !== 'All Districts' ? selectedDistrict : undefined,
+				stream: selectedStream || undefined,
+				mode: selectedMode as any || undefined,
+				min_rating: minRating > 0 ? minRating : undefined,
+				max_price: maxPrice > 0 ? maxPrice : undefined,
+				available_today: availableToday || undefined
+			};
+			
+			tutors = await searchTutors(params);
+		} catch (err: any) {
+			error = err.message || 'Failed to search tutors. Please try again.';
+			console.error('Search error:', err);
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	// Initial search on load
+	performSearch();
 </script>
 
 <svelte:head>
@@ -43,18 +84,20 @@
 					<option>Kurunegala</option>
 				</select>
 			</div>
-			<button class="btn btn-saffron btn-sm">Search</button>
+			<button class="btn btn-saffron btn-sm" onclick={performSearch} disabled={isLoading}>Search</button>
 		</div>
 	</div>
 </div>
 
 <!-- Login notice -->
+{#if !authStore.user}
 <div class="container" style="padding-top: 16px">
 	<div class="login-gate">
 		<div class="login-gate-txt"><i class="ti ti-lock" style="font-size: 14px; margin-right: 5px"></i>Log in to view full tutor profiles, check availability, and book sessions.</div>
 		<a href="/auth/login?redirect=/find-tutors" class="btn btn-saffron btn-sm">Log in to book</a>
 	</div>
 </div>
+{/if}
 
 <div class="page-layout" style="max-width: 1100px; margin: 0 auto; padding: 0 24px">
 	<!-- Filters -->
@@ -106,7 +149,7 @@
 	<!-- Results -->
 	<div class="results-col">
 		<div class="results-header">
-			<div class="results-count"><strong>48 tutors</strong> found for Physical Science</div>
+			<div class="results-count"><strong>{tutors.length} tutors</strong> found</div>
 			<select class="sort-select">
 				<option>Sort: Top Rated</option>
 				<option>Sort: Price — Low to High</option>
@@ -114,118 +157,72 @@
 				<option>Sort: Nearest</option>
 			</select>
 		</div>
-		<div class="tutors-list">
-			<a href="/tutor/1" style="display: block">
-				<div class="tutor-list-card">
-					<div class="tlc-photo" style="background: #EEF2FF; color: #3B4FD8">AP</div>
-					<div class="tlc-body">
-						<div class="tlc-top">
-							<div>
-								<div class="tlc-name">Aruna Perera <span class="verified-tick"></span></div>
-								<div class="tlc-specialty">Physics Specialist (A/L) · BSc Physics, University of Peradeniya</div>
-								<div class="tlc-metrics">
-									<span class="badge-merit">MERIT 98</span>
-									<span class="tlc-rating"><span style="color: var(--saffron)">★</span> 4.9</span>
-									<span style="font-size: 12px; color: var(--muted-fg)">(120 reviews)</span>
-									<span class="badge badge-teal">Verified</span>
+		
+		{#if isLoading}
+			<div style="text-align: center; padding: 40px;">
+				<div style="width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--saffron); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
+				<div style="color: var(--muted-fg);">Searching for tutors...</div>
+			</div>
+		{:else if error}
+			<div style="text-align: center; padding: 40px; color: var(--error-fg);">
+				<div style="font-size: 14px; margin-bottom: 8px;">{error}</div>
+				<button class="btn btn-saffron btn-sm" onclick={performSearch}>Try again</button>
+			</div>
+		{:else if tutors.length === 0}
+			<div style="text-align: center; padding: 40px; color: var(--muted-fg);">
+				<div style="font-size: 16px; margin-bottom: 8px;">No tutors found matching your criteria</div>
+				<div style="font-size: 13px;">Try adjusting your filters or search terms</div>
+			</div>
+		{:else}
+			<div class="tutors-list">
+				{#each tutors as tutor}
+					<a href="/tutor/{tutor.id}" style="display: block">
+						<div class="tutor-list-card">
+							<div class="tlc-photo" style="background: #EEF2FF; color: #3B4FD8">
+								{#if tutor.profile_photo_url}
+									<img src={tutor.profile_photo_url} alt={tutor.full_name} style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-sm);" />
+								{:else}
+									{tutor.full_name.split(' ').map(n => n[0]).join('')}
+								{/if}
+							</div>
+							<div class="tlc-body">
+								<div class="tlc-top">
+									<div>
+										<div class="tlc-name">{tutor.full_name}</div>
+										<div class="tlc-specialty">
+											{#each tutor.listings.slice(0, 2) as listing}
+												{listing.mode} · {listing.class_type}
+											{/each}
+										</div>
+										<div class="tlc-metrics">
+											<span class="badge-merit">MERIT {tutor.merit_score}</span>
+											<span class="tlc-rating">
+												<span style="color: var(--saffron)">★</span> {tutor.average_rating?.toFixed(1) || 'N/A'}
+											</span>
+											<span style="font-size: 12px; color: var(--muted-fg)">({tutor.review_count} reviews)</span>
+										</div>
+									</div>
+									<div class="tlc-right">
+										<div class="tlc-price">
+											LKR {tutor.listings[0]?.hourly_rate.toLocaleString() || 'N/A'}<span>/hr</span>
+										</div>
+										<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
+									</div>
+								</div>
+								<div class="tlc-tags">
+									{#each tutor.listings.slice(0, 3) as listing}
+										<span class="tag">{listing.mode}</span>
+									{/each}
+									{#if tutor.listings.length > 3}
+										<span class="tag">+{tutor.listings.length - 3} more</span>
+									{/if}
 								</div>
 							</div>
-							<div class="tlc-right">
-								<div class="tlc-price">LKR 3,500<span>/hr</span></div>
-								<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
-							</div>
 						</div>
-						<div class="tlc-tags">
-							<span class="tag">Colombo 07</span><span class="tag">Individual</span><span class="tag">Online</span><span class="tag">Theory + Revision</span><span class="tag">Past Papers</span>
-						</div>
-					</div>
-				</div>
-			</a>
-
-			<a href="/tutor/2" style="display: block">
-				<div class="tutor-list-card">
-					<div class="tlc-photo" style="background: #FFF0E0; color: #A06000">DJ</div>
-					<div class="tlc-body">
-						<div class="tlc-top">
-							<div>
-								<div class="tlc-name">Dilini Jayasuriya <span class="verified-tick"></span></div>
-								<div class="tlc-specialty">Combined Maths (A/L) · BSc Mathematics, University of Colombo</div>
-								<div class="tlc-metrics">
-									<span class="badge-merit">MERIT 94</span>
-									<span class="tlc-rating"><span style="color: var(--saffron)">★</span> 5.0</span>
-									<span style="font-size: 12px; color: var(--muted-fg)">(85 reviews)</span>
-									<span class="badge badge-teal">Verified</span>
-								</div>
-							</div>
-							<div class="tlc-right">
-								<div class="tlc-price">LKR 2,000<span>/hr</span></div>
-								<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
-							</div>
-						</div>
-						<div class="tlc-tags">
-							<span class="tag">Kandy</span><span class="tag">Online</span><span class="tag">Group Classes</span><span class="tag">A/L Science</span>
-						</div>
-					</div>
-				</div>
-			</a>
-
-			<a href="/tutor/3" style="display: block">
-				<div class="tutor-list-card">
-					<div class="tlc-photo" style="background: #F0FDF4; color: #166534">RS</div>
-					<div class="tlc-body">
-						<div class="tlc-top">
-							<div>
-								<div class="tlc-name">Dr. Rohan Silva <span class="verified-tick"></span></div>
-								<div class="tlc-specialty">Chemistry Specialist (A/L) · PhD Chemistry, University of Kelaniya</div>
-								<div class="tlc-metrics">
-									<span class="badge-merit">MERIT 99</span>
-									<span class="tlc-rating"><span style="color: var(--saffron)">★</span> 4.9</span>
-									<span style="font-size: 12px; color: var(--muted-fg)">(310 reviews)</span>
-									<span class="badge badge-teal">Verified</span>
-								</div>
-							</div>
-							<div class="tlc-right">
-								<div class="tlc-price">LKR 4,500<span>/hr</span></div>
-								<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
-							</div>
-						</div>
-						<div class="tlc-tags">
-							<span class="tag">Gampaha</span><span class="tag">Physical</span><span class="tag">Ex-Paper Marker</span><span class="tag">Individual</span>
-						</div>
-					</div>
-				</div>
-			</a>
-
-			<a href="/tutor/4" style="display: block">
-				<div class="tutor-list-card">
-					<div class="tlc-photo" style="background: #FDF4FF; color: #7C3AED">NK</div>
-					<div class="tlc-body">
-						<div class="tlc-top">
-							<div>
-								<div class="tlc-name">Nadeesha Kumari <span class="verified-tick"></span></div>
-								<div class="tlc-specialty">Biology & Chemistry (A/L) · BSc Botany, University of Peradeniya</div>
-								<div class="tlc-metrics">
-									<span class="badge-merit">MERIT 91</span>
-									<span class="tlc-rating"><span style="color: var(--saffron)">★</span> 4.7</span>
-									<span style="font-size: 12px; color: var(--muted-fg)">(56 reviews)</span>
-									<span class="badge badge-teal">Verified</span>
-								</div>
-							</div>
-							<div class="tlc-right">
-								<div class="tlc-price">LKR 2,500<span>/hr</span></div>
-								<span class="btn btn-outline btn-sm" style="border-radius: 100px">View profile →</span>
-							</div>
-						</div>
-						<div class="tlc-tags">
-							<span class="tag">Negombo</span><span class="tag">Online</span><span class="tag">In-person</span><span class="tag">Biological Science</span>
-						</div>
-					</div>
-				</div>
-			</a>
-		</div>
-		<div style="text-align: center; padding: 24px 0">
-			<button class="btn btn-ghost">Load more tutors</button>
-		</div>
+					</a>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -475,5 +472,8 @@
 		font-size: 13px;
 		color: var(--saffron-hv);
 		font-weight: 500;
+	}
+	@keyframes spin {
+		to { transform: rotate(360deg); }
 	}
 </style>
