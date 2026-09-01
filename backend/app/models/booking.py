@@ -2,6 +2,7 @@ import enum
 import uuid
 from datetime import datetime, time, date
 from sqlalchemy import String, Integer, Boolean, Text, DateTime, Time, Date, Enum as SQLEnum
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
@@ -24,9 +25,9 @@ class AvailabilitySlot(Base):
     __tablename__ = "availability_slots"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        String(36), primary_key=True, default=uuid.uuid4
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    teacher_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+    teacher_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
     day_of_week: Mapped[int] = mapped_column(Integer, nullable=False)  # 0=Mon, 6=Sun
     start_time: Mapped[time] = mapped_column(Time, nullable=False)
     end_time: Mapped[time] = mapped_column(Time, nullable=False)
@@ -41,9 +42,9 @@ class BlockedDate(Base):
     __tablename__ = "blocked_dates"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        String(36), primary_key=True, default=uuid.uuid4
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    teacher_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+    teacher_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
     blocked_date: Mapped[date] = mapped_column(Date, nullable=False)
     reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
@@ -56,11 +57,11 @@ class Booking(Base):
     __tablename__ = "bookings"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        String(36), primary_key=True, default=uuid.uuid4
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    student_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
-    teacher_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
-    listing_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    student_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    teacher_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    listing_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
     session_start: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
     session_end: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     booking_type: Mapped[BookingType] = mapped_column(
@@ -70,7 +71,7 @@ class Booking(Base):
     status: Mapped[BookingStatus] = mapped_column(
         SQLEnum(BookingStatus), default=BookingStatus.PENDING
     )
-    cancelled_by: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    cancelled_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
     cancel_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     can_review: Mapped[bool] = mapped_column(Boolean, default=False)
