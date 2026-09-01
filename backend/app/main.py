@@ -24,13 +24,13 @@ app.add_middleware(
 from app.api.routes import auth, tutors, bookings, payments, reviews, messages, ai_chat, admin
 
 app.include_router(auth.router, prefix="/api/v1")
-app.include_router(tutors.router, prefix="/api/v1/tutors", tags=["tutors"])
-app.include_router(bookings.router, prefix="/api/v1/bookings", tags=["bookings"])
-app.include_router(payments.router, prefix="/api/v1/payments", tags=["payments"])
-app.include_router(reviews.router, prefix="/api/v1/reviews", tags=["reviews"])
-app.include_router(messages.router, prefix="/api/v1/messages", tags=["messages"])
-app.include_router(ai_chat.router, prefix="/api/v1/ai", tags=["ai"])
-app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(tutors.router, prefix="/api/v1")
+app.include_router(bookings.router, prefix="/api/v1")
+app.include_router(payments.router, prefix="/api/v1")
+app.include_router(reviews.router, prefix="/api/v1")
+app.include_router(messages.router, prefix="/api/v1")
+app.include_router(ai_chat.router, prefix="/api/v1")
+app.include_router(admin.router, prefix="/api/v1")
 
 
 @app.get("/")
