@@ -12,6 +12,17 @@ class SubjectResponse(BaseModel):
     category: SubjectCategory
 
 
+class ListingCreate(BaseModel):
+    subject_id: str
+    mode: TeachingMode
+    class_type: ClassType
+    hourly_rate: Decimal
+    description: Optional[str] = None
+    trial_available: bool = False
+    trial_rate: Optional[Decimal] = None
+    max_group_size: Optional[int] = None
+
+
 class TutorListingResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: str

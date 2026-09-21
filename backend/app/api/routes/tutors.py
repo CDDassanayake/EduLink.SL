@@ -12,6 +12,7 @@ from app.schemas.tutor import (
     TutorSearchResponse,
     TutorProfileResponse,
     TutorListingResponse,
+    ListingCreate,
     AvailabilitySlotResponse,
     SubjectResponse,
     AvailabilitySlotCreate,
@@ -89,7 +90,19 @@ async def search_tutors(
                 }
             
             tutors_dict[teacher_id]["listings"].append(
-                TutorListingResponse.model_validate(listing)
+                TutorListingResponse(
+                    id=str(listing.id),
+                    teacher_id=str(listing.teacher_id),
+                    subject_id=str(listing.subject_id),
+                    mode=listing.mode,
+                    class_type=listing.class_type,
+                    hourly_rate=listing.hourly_rate,
+                    description=listing.description,
+                    trial_available=listing.trial_available,
+                    trial_rate=listing.trial_rate,
+                    max_group_size=listing.max_group_size,
+                    status=listing.status
+                )
             )
         
         # Filter by availability today if requested
@@ -177,7 +190,22 @@ async def get_tutor_profile(
         "merit_score": user.merit_score,
         "average_rating": user.merit_score / 20.0 if user.merit_score else 0.0,
         "review_count": 0,  # TODO: Calculate from reviews table
-        "listings": [TutorListingResponse.model_validate(l) for l in listings],
+        "listings": [
+            TutorListingResponse(
+                id=str(l.id),
+                teacher_id=str(l.teacher_id),
+                subject_id=str(l.subject_id),
+                mode=l.mode,
+                class_type=l.class_type,
+                hourly_rate=l.hourly_rate,
+                description=l.description,
+                trial_available=l.trial_available,
+                trial_rate=l.trial_rate,
+                max_group_size=l.max_group_size,
+                status=l.status
+            )
+            for l in listings
+        ],
         "bio": profile.bio if profile else None,
         "years_experience": profile.years_experience if profile else None,
         "verification_status": profile.verification_status if profile else "PENDING",
@@ -249,14 +277,7 @@ async def get_tutor_reviews(
 
 @router.post("/listings", response_model=TutorListingResponse, status_code=status.HTTP_201_CREATED)
 async def create_listing(
-    subject_id: str,
-    mode: TeachingMode,
-    class_type: ClassType,
-    hourly_rate: float,
-    description: Optional[str] = None,
-    trial_available: bool = False,
-    trial_rate: Optional[float] = None,
-    max_group_size: Optional[int] = None,
+    listing_data: ListingCreate,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
@@ -267,34 +288,46 @@ async def create_listing(
     """
     if current_user.role != UserRole.TEACHER:
         raise HTTPException(status_code=403, detail="Only teachers can create listings")
-    
+
     # Verify subject exists
-    subject_query = select(Subject).where(Subject.id == subject_id)
+    subject_query = select(Subject).where(Subject.id == listing_data.subject_id)
     subject_result = await db.execute(subject_query)
     subject = subject_result.scalar_one_or_none()
-    
+
     if not subject:
         raise HTTPException(status_code=404, detail="Subject not found")
-    
+
     # Create listing
     listing = TeacherListing(
         teacher_id=current_user.id,
         subject_id=subject.id,
-        mode=mode,
-        class_type=class_type,
-        hourly_rate=hourly_rate,
-        description=description,
-        trial_available=trial_available,
-        trial_rate=trial_rate,
-        max_group_size=max_group_size,
+        mode=listing_data.mode,
+        class_type=listing_data.class_type,
+        hourly_rate=listing_data.hourly_rate,
+        description=listing_data.description,
+        trial_available=listing_data.trial_available,
+        trial_rate=listing_data.trial_rate,
+        max_group_size=listing_data.max_group_size,
         status=ListingStatus.INACTIVE  # Requires admin approval
     )
-    
+
     db.add(listing)
     await db.commit()
     await db.refresh(listing)
-    
-    return TutorListingResponse.model_validate(listing)
+
+    return TutorListingResponse(
+        id=str(listing.id),
+        teacher_id=str(listing.teacher_id),
+        subject_id=str(listing.subject_id),
+        mode=listing.mode,
+        class_type=listing.class_type,
+        hourly_rate=listing.hourly_rate,
+        description=listing.description,
+        trial_available=listing.trial_available,
+        trial_rate=listing.trial_rate,
+        max_group_size=listing.max_group_size,
+        status=listing.status
+    )
 
 
 @router.get("/my-listings", response_model=list[TutorListingResponse])
@@ -312,8 +345,23 @@ async def get_my_listings(
     query = select(TeacherListing).where(TeacherListing.teacher_id == current_user.id)
     result = await db.execute(query)
     listings = result.scalars().all()
-    
-    return [TutorListingResponse.model_validate(l) for l in listings]
+
+    return [
+        TutorListingResponse(
+            id=str(l.id),
+            teacher_id=str(l.teacher_id),
+            subject_id=str(l.subject_id),
+            mode=l.mode,
+            class_type=l.class_type,
+            hourly_rate=l.hourly_rate,
+            description=l.description,
+            trial_available=l.trial_available,
+            trial_rate=l.trial_rate,
+            max_group_size=l.max_group_size,
+            status=l.status
+        )
+        for l in listings
+    ]
 
 
 @router.put("/listings/{listing_id}", response_model=TutorListingResponse)
@@ -365,8 +413,20 @@ async def update_listing(
     
     await db.commit()
     await db.refresh(listing)
-    
-    return TutorListingResponse.model_validate(listing)
+
+    return TutorListingResponse(
+        id=str(listing.id),
+        teacher_id=str(listing.teacher_id),
+        subject_id=str(listing.subject_id),
+        mode=listing.mode,
+        class_type=listing.class_type,
+        hourly_rate=listing.hourly_rate,
+        description=listing.description,
+        trial_available=listing.trial_available,
+        trial_rate=listing.trial_rate,
+        max_group_size=listing.max_group_size,
+        status=listing.status
+    )
 
 
 @router.delete("/listings/{listing_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -554,5 +614,12 @@ async def get_subjects(db: AsyncSession = Depends(get_db)):
     query = select(Subject).order_by(Subject.display_order, Subject.name)
     result = await db.execute(query)
     subjects = result.scalars().all()
-    
-    return [SubjectResponse.model_validate(s) for s in subjects]
+
+    return [
+        SubjectResponse(
+            id=str(s.id),
+            name=s.name,
+            category=s.category
+        )
+        for s in subjects
+    ]
