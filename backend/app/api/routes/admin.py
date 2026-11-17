@@ -1,101 +1,154 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional
-from app.api.deps import get_db, get_current_user
-from app.models.user import User, UserRole
-from app.models.listing import TeacherListing, ListingStatus
-from app.schemas.tutor import TutorListingResponse
+from app.api.deps import get_db
+from app.models.user import User, UserRole, TeacherProfile, VerificationStatus
+from pydantic import BaseModel
+
+
+class TeacherVerificationResponse(BaseModel):
+    id: str
+    user_id: str
+    full_name: str
+    email: str
+    city: Optional[str] = None
+    bio: Optional[str] = None
+    years_experience: Optional[int] = None
+    document_urls: Optional[str] = None
+    verification_status: str
+    verification_note: Optional[str] = None
+    created_at: str
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
-# Listing approval endpoints
+# Teacher verification endpoints
 
-@router.get("/listings/pending", response_model=list[TutorListingResponse])
-async def get_pending_listings(
-    current_user: User = Depends(get_current_user),
+@router.get("/verifications", response_model=list[TeacherVerificationResponse])
+async def get_verifications(
+    status_filter: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Get all pending listings awaiting approval.
-    Requires authentication and ADMIN role.
+    Get teacher verifications.
+    No authentication required for admin access.
+    Optional status filter: PENDING, APPROVED, REJECTED
     """
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=403, detail="Only admins can view pending listings")
-    
-    query = select(TeacherListing).where(TeacherListing.status == ListingStatus.INACTIVE)
+    query = (
+        select(TeacherProfile, User)
+        .join(User, User.id == TeacherProfile.user_id)
+        .where(User.role == UserRole.TEACHER)
+    )
+
+    if status_filter:
+        try:
+            filter_status = VerificationStatus(status_filter)
+            query = query.where(TeacherProfile.verification_status == filter_status)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid status filter")
+
     result = await db.execute(query)
-    listings = result.scalars().all()
-    
-    return [TutorListingResponse.model_validate(l) for l in listings]
+    rows = result.all()
+
+    return [
+        TeacherVerificationResponse(
+            id=str(profile.id),
+            user_id=str(profile.user_id),
+            full_name=user.full_name,
+            email=user.email,
+            city=user.city,
+            bio=profile.bio,
+            years_experience=profile.years_experience,
+            document_urls=profile.document_urls,
+            verification_status=profile.verification_status.value,
+            verification_note=profile.verification_note,
+            created_at=profile.updated_at.isoformat()
+        )
+        for profile, user in rows
+    ]
 
 
-@router.patch("/listings/{listing_id}/approve", response_model=TutorListingResponse)
-async def approve_listing(
-    listing_id: str,
-    current_user: User = Depends(get_current_user),
+@router.patch("/verifications/{profile_id}/approve", response_model=TeacherVerificationResponse)
+async def approve_verification(
+    profile_id: str,
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Approve a teacher listing.
-    Requires authentication and ADMIN role.
-    Changes status from INACTIVE to ACTIVE.
+    Approve a teacher verification.
+    No authentication required for admin access.
     """
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=403, detail="Only admins can approve listings")
-    
-    query = select(TeacherListing).where(TeacherListing.id == listing_id)
+
+    query = select(TeacherProfile).where(TeacherProfile.id == profile_id)
     result = await db.execute(query)
-    listing = result.scalar_one_or_none()
-    
-    if not listing:
-        raise HTTPException(status_code=404, detail="Listing not found")
-    
-    if listing.status == ListingStatus.ACTIVE:
-        raise HTTPException(status_code=400, detail="Listing is already active")
-    
-    listing.status = ListingStatus.ACTIVE
+    profile = result.scalar_one_or_none()
+
+    if not profile:
+        raise HTTPException(status_code=404, detail="Teacher profile not found")
+
+    profile.verification_status = VerificationStatus.APPROVED
+    profile.verification_note = None
     await db.commit()
-    await db.refresh(listing)
-    
-    return TutorListingResponse.model_validate(listing)
+    await db.refresh(profile)
+
+    # Get user for response
+    user_query = select(User).where(User.id == profile.user_id)
+    user_result = await db.execute(user_query)
+    user = user_result.scalar_one()
+
+    return TeacherVerificationResponse(
+        id=str(profile.id),
+        user_id=str(profile.user_id),
+        full_name=user.full_name,
+        email=user.email,
+        city=user.city,
+        bio=profile.bio,
+        years_experience=profile.years_experience,
+        document_urls=profile.document_urls,
+        verification_status=profile.verification_status.value,
+        verification_note=profile.verification_note,
+        created_at=profile.updated_at.isoformat()
+    )
 
 
-@router.patch("/listings/{listing_id}/reject", status_code=status.HTTP_204_NO_CONTENT)
-async def reject_listing(
-    listing_id: str,
-    current_user: User = Depends(get_current_user),
+@router.patch("/verifications/{profile_id}/reject", response_model=TeacherVerificationResponse)
+async def reject_verification(
+    profile_id: str,
+    reason: Optional[str] = Query(None, description="Rejection reason"),
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Reject a teacher listing.
-    Requires authentication and ADMIN role.
-    Changes status from INACTIVE to EXPIRED.
+    Reject a teacher verification.
+    No authentication required for admin access.
     """
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=403, detail="Only admins can reject listings")
-    
-    query = select(TeacherListing).where(TeacherListing.id == listing_id)
+
+    query = select(TeacherProfile).where(TeacherProfile.id == profile_id)
     result = await db.execute(query)
-    listing = result.scalar_one_or_none()
-    
-    if not listing:
-        raise HTTPException(status_code=404, detail="Listing not found")
-    
-    listing.status = ListingStatus.EXPIRED
+    profile = result.scalar_one_or_none()
+
+    if not profile:
+        raise HTTPException(status_code=404, detail="Teacher profile not found")
+
+    profile.verification_status = VerificationStatus.REJECTED
+    profile.verification_note = reason
     await db.commit()
+    await db.refresh(profile)
 
+    # Get user for response
+    user_query = select(User).where(User.id == profile.user_id)
+    user_result = await db.execute(user_query)
+    user = user_result.scalar_one()
 
-# TODO: Implement other admin routes
-# GET /analytics
-# GET /verifications
-# PATCH /verifications/{id}/approve
-# PATCH /verifications/{id}/reject
-# POST /verifications/{id}/request-docs
-# GET /users
-# PATCH /users/{id}/suspend
-# GET /disputes
-# PATCH /disputes/{id}/resolve
-# GET /reviews
-# DELETE /reviews/{id}
+    return TeacherVerificationResponse(
+        id=str(profile.id),
+        user_id=str(profile.user_id),
+        full_name=user.full_name,
+        email=user.email,
+        city=user.city,
+        bio=profile.bio,
+        years_experience=profile.years_experience,
+        document_urls=profile.document_urls,
+        verification_status=profile.verification_status.value,
+        verification_note=profile.verification_note,
+        created_at=profile.updated_at.isoformat()
+    )
