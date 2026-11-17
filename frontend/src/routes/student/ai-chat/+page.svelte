@@ -1,36 +1,79 @@
 <script lang="ts">
+	import { sendChatMessage, getChatHistory, clearChatHistory } from '$lib/api/ai';
+	import { getAuthStore } from '$lib/stores/auth.svelte';
+
+	let authStore = getAuthStore();
 	let aiInput = $state('');
-	let messages = $state([
-		{ role: 'ai', text: 'Hello Kasun! I\'m your AI Career Guide, trained on the Sri Lankan curriculum and university entrance requirements. I can help you choose A/L subjects, understand university pathways, find the right tutors, or plan your study schedule. What would you like to explore today?' },
-		{ role: 'user', text: 'What careers can I pursue with A/L Physical Science stream?' },
-		{ role: 'ai', text: 'With A/L Physical Science (Maths, Physics, Chemistry/ICT), you have excellent options in Sri Lanka:<br><br><strong>🎓 Engineering</strong> — University of Moratuwa (most competitive), University of Peradeniya, SLIIT. High z-score required.<br><br><strong>💻 Information Technology</strong> — BSc IT at UoM or SLIIT. Great choice if you enjoy programming.<br><br><strong>⚗️ Physical Sciences / Research</strong> — University of Colombo, Peradeniya. Good path into academia or R&D.<br><br><strong>🏗️ Architecture</strong> — UoM or SLIDA. Combines technical + creative skills.<br><br><strong>📡 Telecommunications</strong> — Growing sector in SL, especially with 5G expansion.<br><br>What are your strengths — do you prefer Maths-heavy paths or more creative/applied fields?' },
-		{ role: 'user', text: 'I\'m interested in IT. What z-score do I need for UoM BSc IT?' },
-		{ role: 'ai', text: 'For <strong>UoM BSc (Hons) IT</strong> (Physical Science stream), you typically need:<br><br>• <strong>Z-score: 1.8 – 2.2+</strong> (varies by year, very competitive)<br>• <strong>2025 cutoff</strong> was approximately 1.95 for district merit<br>• Minimum: 3 passes with at least a C in Combined Maths or ICT<br><br><strong>Tips to improve your z-score:</strong><br>1. Focus heavily on Combined Maths — it has the highest weighting<br>2. Book a verified tutor for past paper practice (Dr. Rohan Silva on EduLink has a 99 merit score)<br>3. Aim for A grades in all 3 subjects<br><br>Would you like me to suggest the best tutors on EduLink for Combined Maths in your district?' }
-	]);
+	let messages = $state<Array<{ role: 'user' | 'ai'; text: string; isThinking?: boolean }>>([]);
+	let isLoading = $state(false);
+	let error = $state('');
+
+	async function loadHistory() {
+		try {
+			const history = await getChatHistory();
+			messages = history.history.map(msg => ({
+				role: msg.role as 'user' | 'ai',
+				text: msg.content
+			}));
+		} catch (e) {
+			console.error('Failed to load chat history:', e);
+		}
+	}
+
+	async function sendAI() {
+		if (!aiInput.trim() || isLoading) return;
+		
+		const userMessage = aiInput;
+		messages = [...messages, { role: 'user', text: userMessage }];
+		aiInput = '';
+		isLoading = true;
+		error = '';
+
+		// Add thinking placeholder
+		const tempId = messages.length;
+		messages = [...messages, { role: 'ai', text: 'Thinking...', isThinking: true }];
+
+		try {
+			const response = await sendChatMessage(userMessage);
+			messages = messages.map((msg, i) => 
+				i === tempId 
+					? { role: 'ai', text: response.response }
+					: msg
+			);
+		} catch (e: any) {
+			error = e.message || 'Failed to get AI response';
+			messages = messages.filter((msg, i) => i !== tempId);
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function clearHistory() {
+		try {
+			await clearChatHistory();
+			messages = [];
+		} catch (e) {
+			console.error('Failed to clear history:', e);
+		}
+	}
 
 	function useChip(text: string) {
 		aiInput = text;
 	}
 
-	function sendAI() {
-		if (!aiInput.trim()) return;
-		messages = [...messages, { role: 'user', text: aiInput }];
-		const tempId = messages.length;
-		messages = [...messages, { role: 'ai', text: 'Thinking...', isThinking: true }];
-		aiInput = '';
-		
-		setTimeout(() => {
-			messages = messages.map((msg, i) => 
-				i === tempId + 1 
-					? { role: 'ai', text: 'That\'s a great question! Based on the Sri Lankan curriculum and current university requirements, I\'d recommend focusing on your core A/L subjects first. Would you like more specific guidance on tutors or study resources available on EduLink SL?' }
-					: msg
-			);
-		}, 1500);
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			sendAI();
+		}
 	}
 
-	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Enter') sendAI();
-	}
+	// Load history on mount
+	$effect(() => {
+		if (authStore.user) {
+			loadHistory();
+		}
+	});
 </script>
 
 <svelte:head>

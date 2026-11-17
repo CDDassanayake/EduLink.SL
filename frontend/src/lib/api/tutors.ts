@@ -1,5 +1,7 @@
 import { apiClient } from './client';
 
+const API_BASE_URL = 'http://localhost:8000/api/v1';
+
 export interface TutorListing {
 	id: string;
 	teacher_id: string;
@@ -51,6 +53,23 @@ export interface Subject {
 	id: string;
 	name: string;
 	category: string;
+}
+
+export interface TeacherProfileUpdate {
+	bio?: string;
+	years_experience?: number;
+	document_urls?: string; // JSON string of document URLs
+}
+
+export interface TeacherProfileDetailResponse {
+	id: string;
+	user_id: string;
+	bio?: string;
+	years_experience?: number;
+	document_urls?: string;
+	verification_status: 'PENDING' | 'APPROVED' | 'REJECTED';
+	verification_note?: string;
+	listing_active: boolean;
 }
 
 export interface TutorSearchParams {
@@ -217,3 +236,38 @@ export async function deleteBlockedDate(blockedDateId: string): Promise<void> {
 		method: 'DELETE',
 	});
 }
+
+// Teacher profile verification endpoints
+export async function createOrUpdateTeacherProfile(params: TeacherProfileUpdate, userId?: string): Promise<TeacherProfileDetailResponse> {
+	const queryParams = userId ? `?user_id=${userId}` : '';
+	return apiClient<TeacherProfileDetailResponse>(`/tutors/profile${queryParams}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(params),
+	});
+}
+
+export async function getMyTeacherProfile(): Promise<TeacherProfileDetailResponse> {
+	return apiClient<TeacherProfileDetailResponse>('/tutors/profile/me');
+}
+
+export async function uploadDocument(file: File): Promise<{ url: string; filename: string }> {
+	const formData = new FormData();
+	formData.append('file', file);
+
+	const response = await fetch(`${API_BASE_URL}/tutors/upload-document`, {
+		method: 'POST',
+		body: formData,
+	});
+
+	if (!response.ok) {
+		const error = await response.json();
+		throw new Error(error.detail || 'Failed to upload document');
+	}
+
+	return response.json();
+}
+
+

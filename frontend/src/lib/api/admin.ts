@@ -1,19 +1,34 @@
 import { apiClient } from './client';
-import type { TutorListing } from './tutors';
 
-// Admin listing approval endpoints
-export async function getPendingListings(): Promise<TutorListing[]> {
-	return apiClient<TutorListing[]>('/admin/listings/pending');
+export interface TeacherVerification {
+	id: string;
+	user_id: string;
+	full_name: string;
+	email: string;
+	city: string | null;
+	bio: string | null;
+	years_experience: number | null;
+	document_urls: string | null;
+	verification_status: 'PENDING' | 'APPROVED' | 'REJECTED';
+	verification_note: string | null;
+	created_at: string;
 }
 
-export async function approveListing(listingId: string): Promise<TutorListing> {
-	return apiClient<TutorListing>(`/admin/listings/${listingId}/approve`, {
+// Admin teacher verification endpoints
+export async function getVerifications(statusFilter?: string): Promise<TeacherVerification[]> {
+	const params = statusFilter ? `?status_filter=${statusFilter}` : '';
+	return apiClient<TeacherVerification[]>(`/admin/verifications${params}`);
+}
+
+export async function approveVerification(profileId: string): Promise<TeacherVerification> {
+	return apiClient<TeacherVerification>(`/admin/verifications/${profileId}/approve`, {
 		method: 'PATCH',
 	});
 }
 
-export async function rejectListing(listingId: string): Promise<void> {
-	return apiClient<void>(`/admin/listings/${listingId}/reject`, {
+export async function rejectVerification(profileId: string, reason?: string): Promise<TeacherVerification> {
+	const params = reason ? `?reason=${encodeURIComponent(reason)}` : '';
+	return apiClient<TeacherVerification>(`/admin/verifications/${profileId}/reject${params}`, {
 		method: 'PATCH',
 	});
 }

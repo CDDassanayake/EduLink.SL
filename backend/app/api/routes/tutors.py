@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from typing import Optional
 from datetime import datetime, timedelta
+import os
+import uuid
+from pathlib import Path
 from app.api.deps import get_db, get_current_user
-from app.models.user import User, UserRole
+from app.models.user import User, UserRole, TeacherProfile
 from app.models.listing import TeacherListing, Subject, TeachingMode, ListingStatus, ClassType
 from app.models.booking import AvailabilitySlot, BlockedDate
 from app.schemas.tutor import (
@@ -17,7 +20,9 @@ from app.schemas.tutor import (
     SubjectResponse,
     AvailabilitySlotCreate,
     BlockedDateCreate,
-    BlockedDateResponse
+    BlockedDateResponse,
+    TeacherProfileUpdate,
+    TeacherProfileDetailResponse
 )
 
 router = APIRouter(prefix="/tutors", tags=["tutors"])
@@ -215,6 +220,159 @@ async def get_tutor_profile(
     return TutorProfileResponse(**response_data)
 
 
+@router.post("/profile", response_model=TeacherProfileDetailResponse, status_code=status.HTTP_201_CREATED)
+async def create_or_update_teacher_profile(
+    profile_data: TeacherProfileUpdate,
+    user_id: str = Query(..., description="User ID (required for registration flow)"),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Create or update teacher profile for verification.
+    No authentication required - user_id must be provided.
+    """
+    # Verify user exists and is a teacher
+    user_query = select(User).where(User.id == user_id)
+    user_result = await db.execute(user_query)
+    user = user_result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user.role != UserRole.TEACHER:
+        raise HTTPException(status_code=403, detail="Only teachers can submit profiles")
+
+    # Check if profile exists
+    query = select(TeacherProfile).where(TeacherProfile.user_id == user_id)
+    result = await db.execute(query)
+    profile = result.scalar_one_or_none()
+
+    if profile:
+        # Update existing profile
+        if profile_data.bio is not None:
+            profile.bio = profile_data.bio
+        if profile_data.years_experience is not None:
+            profile.years_experience = profile_data.years_experience
+        if profile_data.document_urls is not None:
+            profile.document_urls = profile_data.document_urls
+        # Reset verification status when documents are updated
+        if profile_data.document_urls is not None:
+            profile.verification_status = "PENDING"
+            profile.verification_note = None
+    else:
+        # Create new profile
+        profile = TeacherProfile(
+            user_id=user_id,
+            bio=profile_data.bio,
+            years_experience=profile_data.years_experience,
+            document_urls=profile_data.document_urls,
+            verification_status="PENDING"
+        )
+        db.add(profile)
+
+    await db.commit()
+    await db.refresh(profile)
+
+    # Convert UUID fields to strings for JSON serialization
+    return TeacherProfileDetailResponse(
+        id=str(profile.id),
+        user_id=str(profile.user_id),
+        bio=profile.bio,
+        years_experience=profile.years_experience,
+        document_urls=profile.document_urls,
+        verification_status=profile.verification_status,
+        verification_note=profile.verification_note,
+        listing_active=profile.listing_active
+    )
+
+
+@router.get("/profile/me", response_model=TeacherProfileDetailResponse)
+async def get_my_teacher_profile(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get current teacher's profile.
+    Requires authentication and TEACHER role.
+    """
+    if current_user.role != UserRole.TEACHER:
+        raise HTTPException(status_code=403, detail="Only teachers can view their profile")
+
+    query = select(TeacherProfile).where(TeacherProfile.user_id == current_user.id)
+    result = await db.execute(query)
+    profile = result.scalar_one_or_none()
+
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found. Please submit your profile for verification.")
+
+    # Convert UUID fields to strings for JSON serialization
+    return TeacherProfileDetailResponse(
+        id=str(profile.id),
+        user_id=str(profile.user_id),
+        bio=profile.bio,
+        years_experience=profile.years_experience,
+        document_urls=profile.document_urls,
+        verification_status=profile.verification_status,
+        verification_note=profile.verification_note,
+        listing_active=profile.listing_active
+    )
+
+
+# File upload endpoint for verification documents
+UPLOAD_DIR = Path("uploads/verification_docs")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+
+@router.post("/upload-document")
+async def upload_document(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Upload a verification document.
+    Returns the URL to access the file.
+    """
+    # Validate file type
+    allowed_extensions = {'.pdf', '.jpg', '.jpeg', '.png'}
+    file_ext = Path(file.filename).suffix.lower()
+    
+    if file_ext not in allowed_extensions:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid file type. Allowed types: {', '.join(allowed_extensions)}"
+        )
+    
+    # Generate unique filename
+    unique_filename = f"{uuid.uuid4()}{file_ext}"
+    file_path = UPLOAD_DIR / unique_filename
+    
+    # Save file
+    try:
+        with open(file_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
+    
+    # Return URL
+    file_url = f"/api/v1/tutors/documents/{unique_filename}"
+    
+    return {"url": file_url, "filename": file.filename}
+
+
+@router.get("/documents/{filename}")
+async def get_document(filename: str):
+    """
+    Serve uploaded documents.
+    """
+    file_path = UPLOAD_DIR / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    from fastapi.responses import FileResponse
+    return FileResponse(file_path)
+
+
 @router.get("/{tutor_id}/availability", response_model=list[AvailabilitySlotResponse])
 async def get_tutor_availability(
     tutor_id: str,
@@ -284,10 +442,22 @@ async def create_listing(
     """
     Create a new teacher listing.
     Requires authentication and TEACHER role.
-    Listing starts as INACTIVE and requires admin approval.
+    Teacher must be verified to create listings.
+    Verified teachers' listings are automatically ACTIVE.
     """
     if current_user.role != UserRole.TEACHER:
         raise HTTPException(status_code=403, detail="Only teachers can create listings")
+
+    # Check if teacher is verified
+    profile_query = select(TeacherProfile).where(TeacherProfile.user_id == current_user.id)
+    profile_result = await db.execute(profile_query)
+    profile = profile_result.scalar_one_or_none()
+
+    if not profile or profile.verification_status != "APPROVED":
+        raise HTTPException(
+            status_code=403,
+            detail="Your account must be verified before you can create listings. Please complete the verification process."
+        )
 
     # Verify subject exists
     subject_query = select(Subject).where(Subject.id == listing_data.subject_id)
@@ -297,7 +467,7 @@ async def create_listing(
     if not subject:
         raise HTTPException(status_code=404, detail="Subject not found")
 
-    # Create listing
+    # Create listing - auto-active for verified teachers
     listing = TeacherListing(
         teacher_id=current_user.id,
         subject_id=subject.id,
@@ -308,7 +478,7 @@ async def create_listing(
         trial_available=listing_data.trial_available,
         trial_rate=listing_data.trial_rate,
         max_group_size=listing_data.max_group_size,
-        status=ListingStatus.INACTIVE  # Requires admin approval
+        status=ListingStatus.ACTIVE  # Auto-active for verified teachers
     )
 
     db.add(listing)

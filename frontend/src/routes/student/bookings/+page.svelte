@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import ReviewModal from '$lib/components/ReviewModal.svelte';
 
 	let activeTab = $state('upcoming');
 	let showCancelBox = $state(false);
+	let showReviewModal = $state(false);
+	let selectedBooking = $state<{ id: string; teacherName: string } | null>(null);
 
 	function switchTab(tab: string) {
 		activeTab = tab;
@@ -10,6 +13,21 @@
 
 	function toggleCancelBox() {
 		showCancelBox = !showCancelBox;
+	}
+
+	function openReviewModal(bookingId: string, teacherName: string) {
+		selectedBooking = { id: bookingId, teacherName };
+		showReviewModal = true;
+	}
+
+	function closeReviewModal() {
+		showReviewModal = false;
+		selectedBooking = null;
+	}
+
+	function onReviewSuccess() {
+		// Refresh bookings or update UI
+		closeReviewModal();
 	}
 </script>
 
@@ -94,7 +112,7 @@
 				</div>
 				<div class="bc-time"><div class="bc-time-day">17 Jun</div></div>
 				<div class="bc-actions">
-					<button class="btn btn-saffron btn-sm"><i class="ti ti-star"></i> Leave review</button>
+					<button class="btn btn-saffron btn-sm" onclick={() => openReviewModal('booking-123', 'Aruna Perera')}><i class="ti ti-star"></i> Leave review</button>
 				</div>
 			</div>
 			<div class="booking-card">
@@ -122,6 +140,15 @@
 		</div>
 	{/if}
 </div>
+
+{#if showReviewModal && selectedBooking}
+	<ReviewModal
+		bookingId={selectedBooking.id}
+		teacherName={selectedBooking.teacherName}
+		onClose={closeReviewModal}
+		onSuccess={onReviewSuccess}
+	/>
+{/if}
 
 <style>
 	.app-topbar {

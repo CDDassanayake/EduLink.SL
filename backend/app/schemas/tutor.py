@@ -3,6 +3,7 @@ from typing import Optional, List
 from datetime import time
 from decimal import Decimal
 from app.models.listing import TeachingMode, ClassType, ListingStatus, SubjectCategory
+from app.models.user import VerificationStatus
 
 
 class SubjectResponse(BaseModel):
@@ -83,3 +84,20 @@ class BlockedDateResponse(BaseModel):
     teacher_id: str
     blocked_date: str
     reason: Optional[str] = None
+
+
+class TeacherProfileUpdate(BaseModel):
+    bio: Optional[str] = None
+    years_experience: Optional[int] = None
+    document_urls: Optional[str] = None  # JSON string of document URLs
+
+
+class TeacherProfileDetailResponse(BaseModel):
+    id: str
+    user_id: str
+    bio: Optional[str] = None
+    years_experience: Optional[int] = None
+    document_urls: Optional[str] = None
+    verification_status: VerificationStatus
+    verification_note: Optional[str] = None
+    listing_active: bool

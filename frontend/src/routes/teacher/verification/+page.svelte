@@ -1,20 +1,115 @@
 <script lang="ts">
-	let showSuccess = false;
-	let selectedSubjects = ['A/L Physics', 'Combined Maths'];
-	let yearsOfExperience = '3–5 years';
-	let teachingMode = 'Both online & in-person';
-	let bio = 'I hold a BSc (Hons) in Physics from the University of Peradeniya with over 12 years of A/L teaching experience. My approach focuses on building strong fundamentals and exam technique.';
+	import { getAuthStore } from '$lib/stores/auth.svelte';
+	import { createOrUpdateTeacherProfile, getMyTeacherProfile, uploadDocument, type TeacherProfileDetail } from '$lib/api/tutors';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
-	function toggleSubject(subject: string) {
-		if (selectedSubjects.includes(subject)) {
-			selectedSubjects = selectedSubjects.filter(s => s !== subject);
-		} else {
-			selectedSubjects = [...selectedSubjects, subject];
+	let authStore = getAuthStore();
+	let showSuccess = false;
+	let isLoading = $state(false);
+	let isUploading = $state(false);
+	let error = $state('');
+	let profile = $state<TeacherProfileDetail | null>(null);
+
+	let yearsOfExperience = $state('');
+	let bio = $state('');
+	let uploadedFiles = $state<Array<{name: string, url: string}>>([]);
+
+	onMount(async () => {
+		// Allow access without authentication for registration flow
+		// If authenticated, check role
+		if (authStore.user && authStore.user.role !== 'TEACHER') {
+			window.location.href = '/';
+			return;
+		}
+		await loadProfile();
+	});
+
+	async function loadProfile() {
+		// Only try to load profile if user is authenticated
+		if (!authStore.user) {
+			return;
+		}
+
+		try {
+			profile = await getMyTeacherProfile();
+			bio = profile.bio || '';
+			yearsOfExperience = profile.years_experience ? profile.years_experience.toString() : '';
+			if (profile.document_urls) {
+				try {
+					const docs = JSON.parse(profile.document_urls);
+					uploadedFiles = docs;
+				} catch {
+					uploadedFiles = [];
+				}
+			}
+		} catch (e: any) {
+			// Profile doesn't exist yet, that's okay
+			console.log('No existing profile');
 		}
 	}
 
-	function submitVerif() {
-		showSuccess = true;
+	async function submitVerif() {
+		if (!bio || !yearsOfExperience) {
+			error = 'Please fill in all required fields';
+			return;
+		}
+
+		isLoading = true;
+		error = '';
+
+		try {
+			const documentUrls = JSON.stringify(uploadedFiles);
+			// Get user_id from auth store or URL params
+			const userId = authStore.user?.id || $page.url.searchParams.get('user_id');
+
+			if (!userId) {
+				error = 'User ID not found. Please log in or register again.';
+				return;
+			}
+
+			await createOrUpdateTeacherProfile({
+				bio,
+				years_experience: parseInt(yearsOfExperience),
+				document_urls: uploadedFiles.length > 0 ? documentUrls : undefined
+			}, userId);
+			showSuccess = true;
+		} catch (e: any) {
+			error = e.message || 'Failed to submit verification';
+			console.error('Error submitting verification:', e);
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function handleFileUpload(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			isUploading = true;
+			error = '';
+
+			try {
+				const file = input.files[0];
+				const result = await uploadDocument(file);
+				console.log('Upload result:', result); // Debug logging
+				uploadedFiles = [...uploadedFiles, {
+					name: result.filename,
+					url: result.url
+				}];
+				console.log('Uploaded files:', uploadedFiles); // Debug logging
+			} catch (e: any) {
+				error = e.message || 'Failed to upload document';
+				console.error('Error uploading file:', e);
+			} finally {
+				isUploading = false;
+				// Reset input
+				input.value = '';
+			}
+		}
+	}
+
+	function removeFile(index: number) {
+		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
 	}
 </script>
 
@@ -24,13 +119,33 @@
 
 <div class="verif-page-wrapper">
 <div class="verif-wrap">
-	<div class="steps-bar" style="margin-bottom:28px">
-		<div class="step-dot done">1</div>
-		<div class="step-line done"></div>
-		<div class="step-dot active">2</div>
-		<div class="step-line"></div>
-		<div class="step-dot">3</div>
-	</div>
+	{#if profile && profile.verification_status === 'APPROVED'}
+		<div class="section-card" style="text-align:center;padding:40px">
+			<div style="width:64px;height:64px;background:var(--green-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--green)"><i class="ti ti-check"></i></div>
+			<h2 style="font-size:20px;font-weight:800;margin-bottom:6px">Already Verified!</h2>
+			<p style="font-size:14px;color:var(--muted-fg);margin-bottom:20px">Your account has been verified. You can now post classes.</p>
+			<a href="/teacher/dashboard" class="btn btn-primary btn-full">Go to teacher dashboard &rarr;</a>
+		</div>
+	{:else if profile && profile.verification_status === 'REJECTED'}
+		<div class="section-card" style="text-align:center;padding:40px;margin-bottom:16px">
+			<div style="width:64px;height:64px;background:var(--red-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--red)"><i class="ti ti-x"></i></div>
+			<h2 style="font-size:20px;font-weight:800;margin-bottom:6px">Verification Rejected</h2>
+			<p style="font-size:14px;color:var(--muted-fg);margin-bottom:20px">
+				{#if profile.verification_note}
+					Reason: {profile.verification_note}
+				{:else}
+					Your verification was rejected. Please update your documents and resubmit.
+				{/if}
+			</p>
+		</div>
+	{/if}
+
+	{#if error}
+		<div class="alert alert-error" style="margin-bottom:16px">
+			<i class="ti ti-alert-circle"></i>
+			{error}
+		</div>
+	{/if}
 
 	<div class="verif-hero">
 		<div class="verif-hero-icon"><i class="ti ti-shield-check"></i></div>
@@ -40,117 +155,49 @@
 		</div>
 	</div>
 
-	<!-- Step 1: Identity -->
+	<!-- Documents -->
 	<div class="section-card" style="margin-bottom:16px">
 		<div style="font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px">
 			<span style="width:24px;height:24px;background:var(--saffron);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">1</span>
-			National Identity Card (NIC)
+			Documents
 		</div>
-		<div style="font-size:13px;color:var(--muted-fg);margin-bottom:16px">Upload a clear photo of both sides of your NIC. PNG or JPG, max 5MB per file.</div>
-		<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-			<div>
-				<div style="font-size:12px;font-weight:600;color:var(--muted-fg);margin-bottom:6px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.4px">Front side</div>
-				<div class="upload-box done">
-					<i class="ti ti-check" style="color:var(--green)"></i>
-					<div class="upload-box-title" style="color:var(--green)">NIC_front.jpg uploaded</div>
-					<div class="upload-box-sub">Click to replace</div>
-				</div>
-			</div>
-			<div>
-				<div style="font-size:12px;font-weight:600;color:var(--muted-fg);margin-bottom:6px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.4px">Back side</div>
-				<div class="upload-box">
-					<i class="ti ti-upload" style="color:var(--muted-fg)"></i>
-					<div class="upload-box-title">Upload back of NIC</div>
-					<div class="upload-box-sub"><strong style="color:var(--saffron)">Click to browse</strong> or drag & drop</div>
-				</div>
-			</div>
+		<div style="font-size:13px;color:var(--muted-fg);margin-bottom:16px">Upload your NIC, degree certificate, and other qualifications. PNG, JPG, or PDF, max 10MB each.</div>
+		<div class="dropzone" style="margin-bottom:14px">
+			<input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onchange={handleFileUpload} disabled={isUploading} style="display:none" id="fileInput">
+			<label for="fileInput" class="dropzone-label" style={isUploading ? 'opacity:0.5;cursor:not-allowed' : ''}>
+				{#if isUploading}
+					<i class="ti ti-loader" style="font-size:36px;color:var(--saffron);display:block;margin-bottom:8px;animation:spin 1s linear infinite"></i>
+					<div class="dropzone-txt"><strong>Uploading...</strong></div>
+				{:else}
+					<i class="ti ti-file-certificate" style="font-size:36px;color:var(--muted-fg);display:block;margin-bottom:8px"></i>
+					<div class="dropzone-txt"><strong style="color:var(--saffron)">Click to upload</strong> or drag & drop files here</div>
+					<div style="font-size:11px;color:var(--muted-fg);margin-top:4px">PDF, JPG, PNG — Max 10MB each</div>
+				{/if}
+			</label>
 		</div>
+		{#each uploadedFiles as file, index}
+			<div class="file-item">
+				<div class="fi-icon" style="background:#EFF6FF;color:#2563EB"><i class="ti ti-file"></i></div>
+				<div class="fi-name">{file.name}</div>
+				<i class="fi-remove ti ti-x" onclick={() => removeFile(index)}></i>
+			</div>
+		{/each}
 	</div>
 
-	<!-- Step 2: Qualifications -->
+	<!-- Teaching info -->
 	<div class="section-card" style="margin-bottom:16px">
 		<div style="font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px">
 			<span style="width:24px;height:24px;background:var(--saffron);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">2</span>
-			Academic qualifications
-		</div>
-		<div style="font-size:13px;color:var(--muted-fg);margin-bottom:16px">Upload your degree certificate, A/L results, or any other relevant qualification. You can upload multiple files.</div>
-		<div class="dropzone" style="margin-bottom:14px">
-			<i class="ti ti-file-certificate" style="font-size:36px;color:var(--muted-fg);display:block;margin-bottom:8px"></i>
-			<div class="dropzone-txt"><strong style="color:var(--saffron)">Click to upload</strong> or drag & drop files here</div>
-			<div style="font-size:11px;color:var(--muted-fg);margin-top:4px">PDF, JPG, PNG — Max 10MB each</div>
-		</div>
-		<div class="file-item">
-			<div class="fi-icon" style="background:#FEF2F2;color:#DC2626"><i class="ti ti-file-type-pdf"></i></div>
-			<div class="fi-name">BSc_Physics_UoP_Certificate.pdf</div>
-			<div class="fi-size">2.4 MB</div>
-			<i class="fi-remove ti ti-x"></i>
-		</div>
-		<div class="file-item">
-			<div class="fi-icon" style="background:#EFF6FF;color:#2563EB"><i class="ti ti-file-type-jpg"></i></div>
-			<div class="fi-name">AL_Results_Sheet_2012.jpg</div>
-			<div class="fi-size">1.1 MB</div>
-			<i class="fi-remove ti ti-x"></i>
-		</div>
-	</div>
-
-	<!-- Step 3: Subjects -->
-	<div class="section-card" style="margin-bottom:16px">
-		<div style="font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px">
-			<span style="width:24px;height:24px;background:var(--saffron);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">3</span>
-			Subjects you will teach
-		</div>
-		<div style="font-size:13px;color:var(--muted-fg);margin-bottom:16px">Select all subjects you intend to teach. Only subjects matching your uploaded qualifications will be approved.</div>
-		<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-			<label class="subject-checkbox {selectedSubjects.includes('A/L Physics') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('A/L Physics')} onchange={() => toggleSubject('A/L Physics')} />A/L Physics
-			</label>
-			<label class="subject-checkbox {selectedSubjects.includes('Combined Maths') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('Combined Maths')} onchange={() => toggleSubject('Combined Maths')} />Combined Maths
-			</label>
-			<label class="subject-checkbox {selectedSubjects.includes('A/L Chemistry') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('A/L Chemistry')} onchange={() => toggleSubject('A/L Chemistry')} />A/L Chemistry
-			</label>
-			<label class="subject-checkbox {selectedSubjects.includes('O/L Mathematics') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('O/L Mathematics')} onchange={() => toggleSubject('O/L Mathematics')} />O/L Mathematics
-			</label>
-			<label class="subject-checkbox {selectedSubjects.includes('O/L Science') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('O/L Science')} onchange={() => toggleSubject('O/L Science')} />O/L Science
-			</label>
-			<label class="subject-checkbox {selectedSubjects.includes('O/L English') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('O/L English')} onchange={() => toggleSubject('O/L English')} />O/L English
-			</label>
-			<label class="subject-checkbox {selectedSubjects.includes('ICT') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('ICT')} onchange={() => toggleSubject('ICT')} />ICT
-			</label>
-			<label class="subject-checkbox {selectedSubjects.includes('A/L Biology') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('A/L Biology')} onchange={() => toggleSubject('A/L Biology')} />A/L Biology
-			</label>
-			<label class="subject-checkbox {selectedSubjects.includes('University Maths') ? 'checked' : ''}">
-				<input type="checkbox" checked={selectedSubjects.includes('University Maths')} onchange={() => toggleSubject('University Maths')} />University Maths
-			</label>
-		</div>
-	</div>
-
-	<!-- Step 4: Teaching info -->
-	<div class="section-card" style="margin-bottom:16px">
-		<div style="font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px">
-			<span style="width:24px;height:24px;background:var(--saffron);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">4</span>
 			Teaching experience
 		</div>
 		<div style="font-size:13px;color:var(--muted-fg);margin-bottom:16px">Tell us about your experience. This will appear on your public profile.</div>
-		<div class="form-grid-2" style="margin-bottom:14px">
-			<div class="form-group">
-				<label class="form-label">Years of teaching experience</label>
-				<select class="form-input" value={yearsOfExperience} onchange={(e) => yearsOfExperience = e.target.value}><option>Less than 1 year</option><option>1–3 years</option><option>3–5 years</option><option>5–10 years</option><option>10+ years</option></select>
-			</div>
-			<div class="form-group">
-				<label class="form-label">Preferred teaching mode</label>
-				<select class="form-input" value={teachingMode} onchange={(e) => teachingMode = e.target.value}><option>Online only</option><option>Both online & in-person</option><option>In-person only</option></select>
-			</div>
+		<div class="form-group" style="margin-bottom:14px">
+			<label class="form-label">Years of teaching experience</label>
+			<input type="number" class="form-input" value={yearsOfExperience} oninput={(e) => yearsOfExperience = e.target.value} placeholder="e.g., 5" min="0" />
 		</div>
 		<div class="form-group">
 			<label class="form-label">Short bio (shown on your profile)</label>
-			<textarea class="form-input" rows="3" value={bio} oninput={(e) => bio = e.target.value} placeholder="Describe your teaching approach, specialisations, and what makes you a great tutor..."></textarea>
+			<textarea class="form-input" rows="4" value={bio} oninput={(e) => bio = e.target.value} placeholder="Describe your teaching approach, specialisations, and what makes you a great tutor..."></textarea>
 		</div>
 	</div>
 
@@ -158,7 +205,13 @@
 	<div class="submit-section">
 		<div class="alert alert-warning" style="margin-bottom:16px"><i class="ti ti-info-circle"></i> By submitting, you confirm all uploaded documents are genuine. Fraudulent submissions result in permanent account ban.</div>
 		<div style="display:flex;gap:12px;align-items:center">
-			<button class="btn btn-primary btn-lg" onclick={submitVerif}><i class="ti ti-send"></i> Submit for verification</button>
+			<button class="btn btn-primary btn-lg" onclick={submitVerif} disabled={isLoading}>
+				{#if isLoading}
+					Processing...
+				{:else}
+					<i class="ti ti-send"></i> Submit for verification
+				{/if}
+			</button>
 			<div style="font-size:12px;color:var(--muted-fg)">Review takes 1–2 business days. We'll email you with the result.</div>
 		</div>
 	</div>
@@ -208,7 +261,7 @@
 		color: var(--saffron);
 		flex-shrink: 0;
 	}
-	.upload-box {
+	.dropzone {
 		border: 2px dashed var(--border-dk);
 		border-radius: var(--r);
 		padding: 24px;
@@ -218,28 +271,13 @@
 		margin-bottom: 8px;
 		background: #fff;
 	}
-	.upload-box:hover {
+	.dropzone-label {
+		display: block;
+		cursor: pointer;
+	}
+	.dropzone:hover {
 		border-color: var(--saffron);
 		background: var(--saffron-lt);
-	}
-	.upload-box.done {
-		border-color: var(--green);
-		border-style: solid;
-		background: var(--green-lt);
-	}
-	.upload-box i {
-		font-size: 32px;
-		display: block;
-		margin-bottom: 8px;
-	}
-	.upload-box-title {
-		font-size: 13px;
-		font-weight: 700;
-		margin-bottom: 3px;
-	}
-	.upload-box-sub {
-		font-size: 12px;
-		color: var(--muted-fg);
 	}
 	.file-item {
 		display: flex;
@@ -266,10 +304,6 @@
 		font-size: 13px;
 		font-weight: 600;
 	}
-	.fi-size {
-		font-size: 11px;
-		color: var(--muted-fg);
-	}
 	.fi-remove {
 		color: var(--muted-fg);
 		cursor: pointer;
@@ -279,27 +313,6 @@
 	.fi-remove:hover {
 		color: var(--red);
 	}
-	.subject-checkbox {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 8px 12px;
-		border: 1.5px solid var(--border-dk);
-		border-radius: var(--r-sm);
-		cursor: pointer;
-		transition: all .15s;
-		background: #fff;
-	}
-	.subject-checkbox:hover {
-		border-color: var(--saffron);
-	}
-	.subject-checkbox input {
-		accent-color: var(--saffron);
-	}
-	.subject-checkbox.checked {
-		border-color: var(--saffron);
-		background: var(--saffron-lt);
-	}
 	.submit-section {
 		background: #fff;
 		border-radius: var(--r-lg);
@@ -307,125 +320,8 @@
 		padding: 22px;
 		margin-top: 20px;
 	}
-	.verif-hero {
-		background: var(--primary);
-		border-radius: var(--r-xl);
-		padding: 28px;
-		color: #fff;
-		margin-bottom: 28px;
-		display: flex;
-		gap: 16px;
-		align-items: flex-start;
-	}
-	.verif-hero-icon {
-		width: 48px;
-		height: 48px;
-		background: rgba(255,255,255,.1);
-		border-radius: var(--r);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 24px;
-		color: var(--saffron);
-		flex-shrink: 0;
-	}
-	.upload-box {
-		border: 2px dashed var(--border-dk);
-		border-radius: var(--r);
-		padding: 24px;
-		text-align: center;
-		cursor: pointer;
-		transition: all .2s;
-		margin-bottom: 8px;
-		background: #fff;
-	}
-	.upload-box:hover {
-		border-color: var(--saffron);
-		background: var(--saffron-lt);
-	}
-	.upload-box.done {
-		border-color: var(--green);
-		border-style: solid;
-		background: var(--green-lt);
-	}
-	.upload-box i {
-		font-size: 32px;
-		display: block;
-		margin-bottom: 8px;
-	}
-	.upload-box-title {
-		font-size: 13px;
-		font-weight: 700;
-		margin-bottom: 3px;
-	}
-	.upload-box-sub {
-		font-size: 12px;
-		color: var(--muted-fg);
-	}
-	.file-item {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		background: #fff;
-		border: 1px solid var(--border-dk);
-		border-radius: var(--r-sm);
-		padding: 10px 14px;
-		margin-bottom: 6px;
-	}
-	.fi-icon {
-		width: 32px;
-		height: 32px;
-		border-radius: var(--r-sm);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 15px;
-		flex-shrink: 0;
-	}
-	.fi-name {
-		flex: 1;
-		font-size: 13px;
-		font-weight: 600;
-	}
-	.fi-size {
-		font-size: 11px;
-		color: var(--muted-fg);
-	}
-	.fi-remove {
-		color: var(--muted-fg);
-		cursor: pointer;
-		font-size: 16px;
-		transition: color .15s;
-	}
-	.fi-remove:hover {
-		color: var(--red);
-	}
-	.subject-checkbox {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 8px 12px;
-		border: 1.5px solid var(--border-dk);
-		border-radius: var(--r-sm);
-		cursor: pointer;
-		transition: all .15s;
-		background: #fff;
-	}
-	.subject-checkbox:hover {
-		border-color: var(--saffron);
-	}
-	.subject-checkbox input {
-		accent-color: var(--saffron);
-	}
-	.subject-checkbox.checked {
-		border-color: var(--saffron);
-		background: var(--saffron-lt);
-	}
-	.submit-section {
-		background: #fff;
-		border-radius: var(--r-lg);
-		border: 1px solid var(--border-dk);
-		padding: 22px;
-		margin-top: 20px;
+	@keyframes spin {
+		from { transform: rotate(0deg); }
+		to { transform: rotate(360deg); }
 	}
 </style>

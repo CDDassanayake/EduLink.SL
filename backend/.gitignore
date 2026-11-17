@@ -39,6 +39,10 @@ ENV/
 *.db
 *.sqlite
 
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
 # Alembic
 alembic/versions/*.pyc
 
@@ -50,3 +54,11 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+delete_payment.py
+
+# Temporary scripts
+delete_payment.py
+clean_database.py
+check_users.py
+test_register.py
+test_tutors.py
